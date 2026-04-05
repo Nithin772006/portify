@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts'
 import Sidebar from '../components/Sidebar'
+import AIChatAgent from '../components/AIChatAgent'
 import { useAuth, API } from '../hooks/useAuth'
 
 export default function Dashboard() {
@@ -53,6 +54,7 @@ export default function Dashboard() {
         {activeTab === 'improve' && <ImproveTab portfolio={portfolio} />}
         {activeTab === 'settings' && <SettingsTab user={user} />}
       </main>
+      {portfolio && <AIChatAgent portfolioId={portfolio.portfolioId} onDesignApplied={loadData} />}
     </div>
   )
 }
