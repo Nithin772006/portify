@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{name}} — {{title}}</title>
+<meta name="description" content="{{bio}}">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#0a0a0a;color:#fafafa;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.6;min-height:100vh}
+a{color:#fafafa;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);transition:border-color 0.2s}
+a:hover{border-color:rgba(255,255,255,0.6)}
+.container{max-width:800px;margin:0 auto;padding:60px 24px}
+.header{padding:80px 0 60px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.name{font-size:clamp(36px,8vw,56px);font-weight:900;letter-spacing:-0.04em;line-height:1.1}
+.title-text{font-size:18px;color:#a1a1aa;margin-top:8px;font-family:monospace}
+.location{font-size:13px;color:#71717a;margin-top:8px;font-family:monospace}
+.links{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap}
+.links a{font-size:13px;font-family:monospace;color:#a1a1aa;padding:6px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:9999px;transition:all 0.2s}
+.links a:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.25)}
+.bio{padding:48px 0;font-size:16px;color:#d4d4d8;line-height:1.8;border-bottom:1px solid rgba(255,255,255,0.08)}
+.section{padding:48px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+.section-title{font-size:11px;font-family:monospace;color:#52525b;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:24px}
+.skills-grid{display:flex;flex-wrap:wrap;gap:8px}
+.skill-tag{font-size:13px;font-family:monospace;color:#a1a1aa;padding:6px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:9999px}
+.project-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:28px;margin-bottom:16px;transition:border-color 0.2s}
+.project-card:hover{border-color:rgba(255,255,255,0.2)}
+.project-title{font-size:18px;font-weight:700;margin-bottom:8px}
+.project-desc{font-size:14px;color:#a1a1aa;line-height:1.7;margin-bottom:12px}
+.project-tech{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.project-tech span{font-size:11px;font-family:monospace;color:#71717a;padding:4px 10px;background:rgba(255,255,255,0.04);border-radius:4px}
+.project-links{display:flex;gap:12px}
+.project-links a{font-size:12px;font-family:monospace;color:#71717a;border-bottom:none;padding:4px 12px;border:1px solid rgba(255,255,255,0.08);border-radius:6px}
+.project-links a:hover{background:rgba(255,255,255,0.06)}
+.timeline-item{position:relative;padding-left:24px;margin-bottom:32px;border-left:1px solid rgba(255,255,255,0.1)}
+.timeline-item::before{content:'';position:absolute;left:-4px;top:6px;width:7px;height:7px;background:#fafafa;border-radius:50%}
+.timeline-role{font-size:16px;font-weight:600}
+.timeline-company{font-size:14px;color:#a1a1aa;font-family:monospace}
+.timeline-date{font-size:12px;color:#52525b;font-family:monospace;margin-top:4px}
+.timeline-desc{font-size:14px;color:#a1a1aa;margin-top:8px;line-height:1.7}
+.edu-item{margin-bottom:20px}
+.edu-degree{font-size:16px;font-weight:600}
+.edu-school{font-size:14px;color:#a1a1aa}
+.edu-year{font-size:12px;color:#52525b;font-family:monospace}
+.contact{padding:48px 0;text-align:center}
+.contact-email{font-size:16px;font-family:monospace;color:#a1a1aa}
+.footer{padding:24px 0;text-align:center;font-size:11px;font-family:monospace;color:#27272a}
+@media(max-width:600px){.container{padding:40px 16px}.header{padding:48px 0 40px}.name{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header" data-section="name-title">
+    <h1 class="name">{{name}}</h1>
+    <p class="title-text">{{title}}</p>
+    {{#if location}}<p class="location">📍 {{location}}</p>{{/if}}
+    <div class="links">
+      {{#if email}}<a href="mailto:{{email}}">Email</a>{{/if}}
+      {{#if linkedin}}<a href="{{linkedin}}" target="_blank">LinkedIn</a>{{/if}}
+      {{#if github}}<a href="{{github}}" target="_blank">GitHub</a>{{/if}}
+    </div>
+  </header>
+
+  {{#if bio}}
+  <div class="bio" data-section="bio">{{bio}}</div>
+  {{/if}}
+
+  {{#if skills.length}}
+  <section class="section" data-section="skills">
+    <h2 class="section-title">Skills</h2>
+    <div class="skills-grid">
+      {{#each skills}}<span class="skill-tag">{{this}}</span>{{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{#if projects.length}}
+  <section class="section" data-section="projects">
+    <h2 class="section-title">Projects</h2>
+    {{#each projects}}
+    <div class="project-card">
+      <h3 class="project-title">{{this.title}}</h3>
+      {{#if this.description}}<p class="project-desc">{{this.description}}</p>{{/if}}
+      {{#if this.techStack.length}}
+      <div class="project-tech">
+        {{#each this.techStack}}<span>{{this}}</span>{{/each}}
+      </div>
+      {{/if}}
+      <div class="project-links">
+        {{#if this.githubUrl}}<a href="{{this.githubUrl}}" target="_blank">GitHub</a>{{/if}}
+        {{#if this.liveUrl}}<a href="{{this.liveUrl}}" target="_blank">Live</a>{{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </section>
+  {{/if}}
+
+  {{#if experience.length}}
+  <section class="section" data-section="experience">
+    <h2 class="section-title">Experience</h2>
+    {{#each experience}}
+    <div class="timeline-item">
+      <div class="timeline-role">{{this.role}}</div>
+      <div class="timeline-company">{{this.company}}</div>
+      <div class="timeline-date">{{this.startDate}} — {{#if this.isPresent}}Present{{else}}{{this.endDate}}{{/if}}</div>
+      {{#if this.description}}<p class="timeline-desc">{{this.description}}</p>{{/if}}
+    </div>
+    {{/each}}
+  </section>
+  {{/if}}
+
+  {{#if education}}
+  <section class="section" data-section="education">
+    <h2 class="section-title">Education</h2>
+    <div class="edu-item">
+      <div class="edu-degree">{{education.degree}} in {{education.fieldOfStudy}}</div>
+      <div class="edu-school">{{education.institution}}</div>
+      <div class="edu-year">{{education.graduationYear}}</div>
+    </div>
+  </section>
+  {{/if}}
+
+  <footer class="footer">
+    Built with Portify · {{currentYear}}
+  </footer>
+</div>
+
+<script>
+(function(){
+  var pid='{{portfolioId}}';
+  var sid='s_'+Math.random().toString(36).substr(2,9);
+  function track(type,data){
+    fetch('/api/analytics/'+type,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({portfolioId:pid,sessionId:sid},data))
+    }).catch(function(){});
+  }
+  track('pageview',{referrer:document.referrer,userAgent:navigator.userAgent,timestamp:new Date().toISOString()});
+  var sections=document.querySelectorAll('[data-section]');
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var start=Date.now();
+        var el=entry.target;
+        var check=setInterval(function(){
+          if(!el.getBoundingClientRect || el.getBoundingClientRect().top>window.innerHeight||el.getBoundingClientRect().bottom<0){
+            clearInterval(check);
+            track('section-view',{section:el.getAttribute('data-section'),timeSpentMs:Date.now()-start});
+          }
+        },1000);
+        setTimeout(function(){clearInterval(check);track('section-view',{section:el.getAttribute('data-section'),timeSpentMs:Date.now()-start});},30000);
+      }
+    });
+  },{threshold:0.3});
+  sections.forEach(function(s){observer.observe(s);});
+})();
+</script>
+</body>
+</html>

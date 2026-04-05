@@ -1,0 +1,98 @@
+{
+  "software-engineer": {
+    "label": "Software Engineer",
+    "emoji": "💻",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "github", "portfolio"],
+    "suggestedSkills": ["JavaScript", "TypeScript", "React", "Node.js", "Python", "Git", "Docker", "AWS", "SQL", "REST API", "GraphQL", "CI/CD", "MongoDB", "PostgreSQL"],
+    "sections": ["projects", "experience", "education"]
+  },
+  "ui-ux-designer": {
+    "label": "UI/UX Designer",
+    "emoji": "🎨",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "portfolio", "dribbble", "behance"],
+    "suggestedSkills": ["Figma", "Sketch", "Adobe XD", "Prototyping", "User Research", "Wireframing", "Design Systems", "Typography", "Color Theory", "Usability Testing", "Interaction Design", "UI Design"],
+    "sections": ["projects", "experience", "education"]
+  },
+  "data-scientist": {
+    "label": "Data Scientist",
+    "emoji": "📊",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "github", "kaggle"],
+    "suggestedSkills": ["Python", "R", "SQL", "TensorFlow", "PyTorch", "Pandas", "NumPy", "Machine Learning", "Deep Learning", "Statistics", "Data Visualization", "Scikit-learn"],
+    "sections": ["projects", "experience", "education"]
+  },
+  "doctor": {
+    "label": "Doctor",
+    "emoji": "🩺",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "hospital", "specialization"],
+    "suggestedSkills": ["Patient Care", "Diagnosis", "Treatment Planning", "EHR Systems", "Clinical Research", "Medical Documentation", "Telemedicine", "Surgery"],
+    "sections": ["experience", "education"]
+  },
+  "lawyer": {
+    "label": "Lawyer",
+    "emoji": "⚖️",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "barAssociation", "firmWebsite"],
+    "suggestedSkills": ["Legal Research", "Litigation", "Contract Drafting", "Negotiation", "Compliance", "Case Management", "Legal Writing", "Due Diligence"],
+    "sections": ["experience", "education"]
+  },
+  "marketing-manager": {
+    "label": "Marketing Manager",
+    "emoji": "📈",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "portfolio"],
+    "suggestedSkills": ["SEO", "Content Marketing", "Google Analytics", "Social Media", "Email Marketing", "PPC", "Brand Strategy", "Copywriting", "CRM", "A/B Testing"],
+    "sections": ["projects", "experience", "education"]
+  },
+  "architect": {
+    "label": "Architect",
+    "emoji": "🏛️",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "portfolio"],
+    "suggestedSkills": ["AutoCAD", "Revit", "SketchUp", "3D Modeling", "Sustainable Design", "Building Codes", "Project Management", "BIM", "Rendering"],
+    "sections": ["projects", "experience", "education"]
+  },
+  "photographer": {
+    "label": "Photographer",
+    "emoji": "📸",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "portfolio", "instagram"],
+    "suggestedSkills": ["Lightroom", "Photoshop", "Composition", "Lighting", "Portrait Photography", "Color Grading", "Retouching", "Studio Photography"],
+    "sections": ["projects", "experience"]
+  },
+  "chef": {
+    "label": "Chef",
+    "emoji": "👨‍🍳",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "restaurant"],
+    "suggestedSkills": ["Menu Development", "Food Safety", "Kitchen Management", "Recipe Creation", "Inventory Management", "Culinary Techniques", "Food Presentation"],
+    "sections": ["experience", "education"]
+  },
+  "freelancer": {
+    "label": "Freelancer",
+    "emoji": "🚀",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "portfolio", "github"],
+    "suggestedSkills": ["Project Management", "Client Communication", "Time Management", "Invoicing", "Proposal Writing", "Negotiation", "Self-Marketing"],
+    "sections": ["projects", "experience"]
+  },
+  "researcher": {
+    "label": "Researcher",
+    "emoji": "🔬",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "googleScholar", "orcid"],
+    "suggestedSkills": ["Research Methodology", "Data Analysis", "Academic Writing", "Literature Review", "Statistical Analysis", "Grant Writing", "Peer Review", "MATLAB", "SPSS"],
+    "sections": ["projects", "experience", "education"]
+  },
+  "mechanical-engineer": {
+    "label": "Mechanical Engineer",
+    "emoji": "⚙️",
+    "requiredFields": ["name", "title", "bio", "skills", "location", "email"],
+    "optionalFields": ["phone", "linkedin", "github"],
+    "suggestedSkills": ["SolidWorks", "AutoCAD", "ANSYS", "MATLAB", "Thermodynamics", "Fluid Mechanics", "FEA", "CAD", "Manufacturing", "GD&T"],
+    "sections": ["projects", "experience", "education"]
+  }
+}

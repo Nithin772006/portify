@@ -1,0 +1,118 @@
+{
+  "software-engineer": {
+    "new-york": [
+      {"skill": "React", "demandPercentage": 92},
+      {"skill": "TypeScript", "demandPercentage": 88},
+      {"skill": "Node.js", "demandPercentage": 85},
+      {"skill": "Python", "demandPercentage": 82},
+      {"skill": "AWS", "demandPercentage": 79},
+      {"skill": "Docker", "demandPercentage": 76},
+      {"skill": "PostgreSQL", "demandPercentage": 72},
+      {"skill": "GraphQL", "demandPercentage": 68},
+      {"skill": "Kubernetes", "demandPercentage": 65},
+      {"skill": "CI/CD", "demandPercentage": 62}
+    ],
+    "san-francisco": [
+      {"skill": "Python", "demandPercentage": 94},
+      {"skill": "React", "demandPercentage": 91},
+      {"skill": "TypeScript", "demandPercentage": 89},
+      {"skill": "Go", "demandPercentage": 82},
+      {"skill": "Kubernetes", "demandPercentage": 80},
+      {"skill": "AWS", "demandPercentage": 78},
+      {"skill": "Machine Learning", "demandPercentage": 75},
+      {"skill": "Docker", "demandPercentage": 73},
+      {"skill": "Rust", "demandPercentage": 65},
+      {"skill": "GraphQL", "demandPercentage": 62}
+    ],
+    "london": [
+      {"skill": "TypeScript", "demandPercentage": 90},
+      {"skill": "React", "demandPercentage": 87},
+      {"skill": "Node.js", "demandPercentage": 84},
+      {"skill": "Python", "demandPercentage": 81},
+      {"skill": "AWS", "demandPercentage": 77},
+      {"skill": "Docker", "demandPercentage": 74},
+      {"skill": "Java", "demandPercentage": 71},
+      {"skill": "Kubernetes", "demandPercentage": 68},
+      {"skill": "SQL", "demandPercentage": 66},
+      {"skill": "CI/CD", "demandPercentage": 63}
+    ],
+    "bangalore": [
+      {"skill": "Java", "demandPercentage": 93},
+      {"skill": "React", "demandPercentage": 90},
+      {"skill": "Python", "demandPercentage": 87},
+      {"skill": "Node.js", "demandPercentage": 84},
+      {"skill": "AWS", "demandPercentage": 81},
+      {"skill": "TypeScript", "demandPercentage": 78},
+      {"skill": "Docker", "demandPercentage": 75},
+      {"skill": "Spring Boot", "demandPercentage": 72},
+      {"skill": "MongoDB", "demandPercentage": 68},
+      {"skill": "Microservices", "demandPercentage": 65}
+    ],
+    "chennai": [
+      {"skill": "Java", "demandPercentage": 91},
+      {"skill": "Python", "demandPercentage": 88},
+      {"skill": "React", "demandPercentage": 85},
+      {"skill": "Node.js", "demandPercentage": 82},
+      {"skill": "AWS", "demandPercentage": 78},
+      {"skill": "TypeScript", "demandPercentage": 75},
+      {"skill": "Docker", "demandPercentage": 72},
+      {"skill": "Angular", "demandPercentage": 69},
+      {"skill": "MongoDB", "demandPercentage": 66},
+      {"skill": "SQL", "demandPercentage": 63}
+    ],
+    "default": [
+      {"skill": "JavaScript", "demandPercentage": 90},
+      {"skill": "React", "demandPercentage": 87},
+      {"skill": "Python", "demandPercentage": 84},
+      {"skill": "Node.js", "demandPercentage": 81},
+      {"skill": "TypeScript", "demandPercentage": 78},
+      {"skill": "AWS", "demandPercentage": 75},
+      {"skill": "Docker", "demandPercentage": 72},
+      {"skill": "SQL", "demandPercentage": 69},
+      {"skill": "Git", "demandPercentage": 66},
+      {"skill": "CI/CD", "demandPercentage": 63}
+    ]
+  },
+  "ui-ux-designer": {
+    "default": [
+      {"skill": "Figma", "demandPercentage": 95},
+      {"skill": "Prototyping", "demandPercentage": 88},
+      {"skill": "User Research", "demandPercentage": 85},
+      {"skill": "Design Systems", "demandPercentage": 82},
+      {"skill": "Interaction Design", "demandPercentage": 78},
+      {"skill": "Wireframing", "demandPercentage": 75},
+      {"skill": "Usability Testing", "demandPercentage": 72},
+      {"skill": "Adobe XD", "demandPercentage": 65},
+      {"skill": "Typography", "demandPercentage": 62},
+      {"skill": "Accessibility", "demandPercentage": 60}
+    ]
+  },
+  "data-scientist": {
+    "default": [
+      {"skill": "Python", "demandPercentage": 96},
+      {"skill": "Machine Learning", "demandPercentage": 92},
+      {"skill": "SQL", "demandPercentage": 88},
+      {"skill": "TensorFlow", "demandPercentage": 82},
+      {"skill": "Deep Learning", "demandPercentage": 80},
+      {"skill": "NLP", "demandPercentage": 76},
+      {"skill": "PyTorch", "demandPercentage": 74},
+      {"skill": "Statistics", "demandPercentage": 72},
+      {"skill": "Data Visualization", "demandPercentage": 68},
+      {"skill": "AWS", "demandPercentage": 65}
+    ]
+  },
+  "default": {
+    "default": [
+      {"skill": "Communication", "demandPercentage": 90},
+      {"skill": "Problem Solving", "demandPercentage": 87},
+      {"skill": "Team Collaboration", "demandPercentage": 84},
+      {"skill": "Project Management", "demandPercentage": 80},
+      {"skill": "Leadership", "demandPercentage": 76},
+      {"skill": "Critical Thinking", "demandPercentage": 73},
+      {"skill": "Time Management", "demandPercentage": 70},
+      {"skill": "Adaptability", "demandPercentage": 67},
+      {"skill": "Data Analysis", "demandPercentage": 64},
+      {"skill": "Digital Marketing", "demandPercentage": 61}
+    ]
+  }
+}

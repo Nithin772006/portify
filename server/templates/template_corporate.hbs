@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{name}} — {{title}}</title>
+<meta name="description" content="{{bio}}">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#0a0a0a;color:#fafafa;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.6;min-height:100vh}
+a{color:#fafafa;text-decoration:none;transition:opacity 0.2s}
+a:hover{opacity:0.7}
+.page{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+@media(max-width:768px){.page{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
+.sidebar{background:#111;border-right:1px solid rgba(255,255,255,0.06);padding:48px 32px;position:sticky;top:0;height:100vh;overflow-y:auto}
+@media(max-width:768px){.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}}
+.avatar{width:120px;height:120px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:rgba(255,255,255,0.15);margin-bottom:24px}
+.sidebar-name{font-size:22px;font-weight:700;margin-bottom:4px}
+.sidebar-title{font-size:13px;color:#71717a;font-family:monospace;margin-bottom:20px}
+.contact-list{list-style:none;margin-bottom:32px}
+.contact-list li{font-size:13px;color:#a1a1aa;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-family:monospace}
+.contact-list li a{color:#a1a1aa;border-bottom:none}
+.sidebar-section{margin-bottom:32px}
+.sidebar-section h3{font-size:11px;color:#52525b;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:16px;font-family:monospace}
+.sidebar-skills{display:flex;flex-wrap:wrap;gap:6px}
+.sidebar-skills span{font-size:12px;color:#a1a1aa;padding:5px 12px;border:1px solid rgba(255,255,255,0.08);border-radius:9999px;font-family:monospace}
+.main{padding:48px 40px;max-width:800px}
+@media(max-width:768px){.main{padding:32px 16px}}
+.main-section{margin-bottom:48px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.main-section:last-child{border-bottom:none}
+.main-label{font-size:11px;color:#52525b;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;font-family:monospace}
+.bio-text{font-size:16px;color:#d4d4d8;line-height:1.9}
+.exp-entry{margin-bottom:28px}
+.exp-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.exp-role{font-size:16px;font-weight:600}
+.exp-date{font-size:12px;color:#52525b;font-family:monospace}
+.exp-company{font-size:14px;color:#71717a;margin-top:2px}
+.exp-desc{font-size:14px;color:#a1a1aa;margin-top:8px;line-height:1.7}
+.edu-entry{margin-bottom:16px}
+.edu-degree{font-size:15px;font-weight:600}
+.edu-school{font-size:13px;color:#71717a}
+.edu-year{font-size:12px;color:#52525b;font-family:monospace}
+.project-entry{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:24px;margin-bottom:16px}
+.project-entry h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.project-entry p{font-size:14px;color:#a1a1aa;line-height:1.7;margin-bottom:10px}
+.project-entry .links{display:flex;gap:12px}
+.project-entry .links a{font-size:11px;font-family:monospace;color:#52525b;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:2px}
+.footer{padding:24px 40px;font-size:11px;font-family:monospace;color:#27272a;text-align:center}
+</style>
+</head>
+<body>
+<div class="page">
+  <aside class="sidebar" data-section="name-title">
+    <div class="avatar">{{name.[0]}}</div>
+    <h1 class="sidebar-name">{{name}}</h1>
+    <p class="sidebar-title">{{title}}</p>
+
+    <ul class="contact-list">
+      {{#if location}}<li>📍 {{location}}</li>{{/if}}
+      {{#if email}}<li><a href="mailto:{{email}}">{{email}}</a></li>{{/if}}
+      {{#if phone}}<li>{{phone}}</li>{{/if}}
+      {{#if linkedin}}<li><a href="{{linkedin}}" target="_blank">LinkedIn</a></li>{{/if}}
+      {{#if github}}<li><a href="{{github}}" target="_blank">GitHub</a></li>{{/if}}
+    </ul>
+
+    {{#if skills.length}}
+    <div class="sidebar-section" data-section="skills">
+      <h3>Skills</h3>
+      <div class="sidebar-skills">
+        {{#each skills}}<span>{{this}}</span>{{/each}}
+      </div>
+    </div>
+    {{/if}}
+  </aside>
+
+  <main class="main">
+    {{#if bio}}
+    <section class="main-section" data-section="bio">
+      <h2 class="main-label">About</h2>
+      <p class="bio-text">{{bio}}</p>
+    </section>
+    {{/if}}
+
+    {{#if experience.length}}
+    <section class="main-section" data-section="experience">
+      <h2 class="main-label">Experience</h2>
+      {{#each experience}}
+      <div class="exp-entry">
+        <div class="exp-header">
+          <span class="exp-role">{{this.role}}</span>
+          <span class="exp-date">{{this.startDate}} — {{#if this.isPresent}}Present{{else}}{{this.endDate}}{{/if}}</span>
+        </div>
+        <div class="exp-company">{{this.company}}</div>
+        {{#if this.description}}<p class="exp-desc">{{this.description}}</p>{{/if}}
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+
+    {{#if education}}
+    <section class="main-section" data-section="education">
+      <h2 class="main-label">Education</h2>
+      <div class="edu-entry">
+        <div class="edu-degree">{{education.degree}} in {{education.fieldOfStudy}}</div>
+        <div class="edu-school">{{education.institution}}</div>
+        <div class="edu-year">{{education.graduationYear}}</div>
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if projects.length}}
+    <section class="main-section" data-section="projects">
+      <h2 class="main-label">Projects</h2>
+      {{#each projects}}
+      <div class="project-entry">
+        <h3>{{this.title}}</h3>
+        {{#if this.description}}<p>{{this.description}}</p>{{/if}}
+        <div class="links">
+          {{#if this.githubUrl}}<a href="{{this.githubUrl}}" target="_blank">GitHub</a>{{/if}}
+          {{#if this.liveUrl}}<a href="{{this.liveUrl}}" target="_blank">Live</a>{{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+  </main>
+</div>
+
+<div class="footer">Built with Portify · {{currentYear}}</div>
+
+<script>
+(function(){
+  var pid='{{portfolioId}}';
+  var sid='s_'+Math.random().toString(36).substr(2,9);
+  function track(type,data){
+    fetch('/api/analytics/'+type,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({portfolioId:pid,sessionId:sid},data))
+    }).catch(function(){});
+  }
+  track('pageview',{referrer:document.referrer,userAgent:navigator.userAgent,timestamp:new Date().toISOString()});
+  var sections=document.querySelectorAll('[data-section]');
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var start=Date.now();
+        var el=entry.target;
+        var check=setInterval(function(){
+          if(!el.getBoundingClientRect || el.getBoundingClientRect().top>window.innerHeight||el.getBoundingClientRect().bottom<0){
+            clearInterval(check);
+            track('section-view',{section:el.getAttribute('data-section'),timeSpentMs:Date.now()-start});
+          }
+        },1000);
+        setTimeout(function(){clearInterval(check);track('section-view',{section:el.getAttribute('data-section'),timeSpentMs:Date.now()-start});},30000);
+      }
+    });
+  },{threshold:0.3});
+  sections.forEach(function(s){observer.observe(s);});
+})();
+</script>
+</body>
+</html>
