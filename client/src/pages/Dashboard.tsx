@@ -45,7 +45,7 @@ export default function Dashboard() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <main style={{ marginLeft: 240, flex: 1, padding: '32px 40px' }}>
+      <main style={{ marginLeft: 280, flex: 1, padding: 40, lineHeight: 1.6 }}>
         {activeTab === 'overview' && <OverviewTab portfolio={portfolio} analytics={analytics} />}
         {activeTab === 'portfolio' && <PortfolioTab portfolio={portfolio} onRegenerate={loadData} />}
         {activeTab === 'analytics' && <AnalyticsTab analytics={analytics} />}
@@ -76,42 +76,42 @@ function OverviewTab({ portfolio, analytics }: any) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 24 }}>Overview</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 28 }}>Overview</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
             className="glass"
-            style={{ padding: 24 }}
+            style={{ padding: 32, minHeight: 120 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <div style={{ fontSize: 11, fontFamily: 'monospace', color: '#52525b', letterSpacing: '0.1em', marginBottom: 8 }}>
+            <div style={{ fontSize: 13, fontFamily: 'monospace', color: '#71717a', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8 }}>
               {stat.label}
             </div>
-            <div style={{ fontSize: 36, fontWeight: 900 }}>
+            <div style={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
               <AnimatedCounter value={stat.value} />
-              <span style={{ fontSize: 14, color: '#71717a', fontWeight: 400 }}>{stat.suffix}</span>
+              <span style={{ fontSize: 18, color: '#71717a', fontWeight: 400, verticalAlign: 'middle' }}>{stat.suffix}</span>
             </div>
           </motion.div>
         ))}
       </div>
 
       {/* Portfolio URL */}
-      <div className="glass" style={{ padding: '20px 24px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="glass" style={{ padding: '24px 28px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <div style={{ fontSize: 11, fontFamily: 'monospace', color: '#52525b', marginBottom: 4 }}>YOUR PORTFOLIO URL</div>
-          <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#a1a1aa' }}>
+          <div style={{ fontSize: 12, fontFamily: 'monospace', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>YOUR PORTFOLIO URL</div>
+          <div style={{ fontFamily: 'monospace', fontSize: 15, color: '#fafafa' }}>
             {window.location.origin}/p/{portfolio?.portfolioId}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="glass-btn small" onClick={copyLink}>
+          <button className="glass-btn small" onClick={copyLink} style={{ fontSize: 14, padding: '10px 20px', borderRadius: 9999, fontFamily: 'monospace', fontWeight: 600 }}>
             {copied ? '✓ Copied' : 'Copy Link'}
           </button>
-          <a href={`http://localhost:3001/p/${portfolio?.portfolioId}.html`} target="_blank" className="glass-btn small" style={{ textDecoration: 'none' }}>
+          <a href={`http://localhost:3001/p/${portfolio?.portfolioId}.html`} target="_blank" className="glass-btn small" style={{ fontSize: 14, padding: '10px 20px', borderRadius: 9999, fontFamily: 'monospace', fontWeight: 600, textDecoration: 'none' }}>
             View Live
           </a>
         </div>
@@ -120,28 +120,41 @@ function OverviewTab({ portfolio, analytics }: any) {
       {/* Suggestions */}
       {portfolio?.suggestions?.length > 0 && (
         <div>
-          <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Suggestions to improve</h3>
+          <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>Suggestions to improve</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {portfolio.suggestions.map((s: any, i: number) => (
-              <div key={i} className="glass" style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {portfolio.suggestions.map((s: any, i: number) => {
+              let badgeBg = 'rgba(161,161,170,0.15)'
+              let badgeColor = '#a1a1aa'
+              let badgeBorder = '1px solid rgba(161,161,170,0.3)'
+              if (s.priority === 'critical') {
+                badgeBg = 'rgba(239,68,68,0.15)'
+                badgeColor = '#ef4444'
+                badgeBorder = '1px solid rgba(239,68,68,0.3)'
+              } else if (s.priority === 'high') {
+                badgeBg = 'rgba(245,158,11,0.15)'
+                badgeColor = '#f59e0b'
+                badgeBorder = '1px solid rgba(245,158,11,0.3)'
+              }
+              return (
+                <div key={i} className="glass" style={{ padding: '18px 24px', minHeight: 56, display: 'flex', alignItems: 'center', gap: 16 }}>
                   <span style={{
                     fontFamily: 'monospace',
-                    fontSize: 10,
-                    padding: '3px 8px',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: '4px 10px',
                     borderRadius: 4,
-                    background: s.priority === 'critical' ? 'rgba(239,68,68,0.15)' : s.priority === 'high' ? 'rgba(251,191,36,0.15)' : 'rgba(255,255,255,0.06)',
-                    color: s.priority === 'critical' ? '#fca5a5' : s.priority === 'high' ? '#fcd34d' : '#a1a1aa',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
+                    background: badgeBg,
+                    color: badgeColor,
+                    border: badgeBorder,
+                    letterSpacing: '0.08em',
                   }}>
-                    {s.priority}
+                    {s.priority.toUpperCase()}
                   </span>
-                  <span style={{ fontSize: 14 }}>{s.text}</span>
+                  <span style={{ fontSize: 15, color: '#fafafa', flex: 1 }}>{s.text}</span>
+                  <span style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 700, color: '#4ade80', marginLeft: 'auto', whiteSpace: 'nowrap' }}>+{s.pts} pts</span>
                 </div>
-                <span style={{ fontFamily: 'monospace', fontSize: 12, color: '#4ade80' }}>+{s.pts} pts</span>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}
@@ -167,8 +180,8 @@ function PortfolioTab({ portfolio, onRegenerate }: any) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 900 }}>My Portfolio</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em' }}>My Portfolio</h1>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="glass-btn small" onClick={handleRegenerate} disabled={regenerating}>
             {regenerating ? <><div className="spinner" /> Regenerating...</> : 'Regenerate'}
@@ -196,7 +209,7 @@ function AnalyticsTab({ analytics }: any) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 24 }}>Analytics</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 28 }}>Analytics</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         {/* Views Chart */}
@@ -205,8 +218,8 @@ function AnalyticsTab({ analytics }: any) {
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={dailyViews.length ? dailyViews : [{ date: 'Today', views: 0 }]}>
               <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#52525b' }} />
-              <YAxis tick={{ fontSize: 11, fill: '#52525b' }} />
+              <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#52525b' }} />
+              <YAxis tick={{ fontSize: 12, fill: '#52525b' }} />
               <Tooltip contentStyle={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} />
               <Line type="monotone" dataKey="views" stroke="#fafafa" strokeWidth={2} dot={false} />
             </LineChart>
@@ -236,7 +249,7 @@ function AnalyticsTab({ analytics }: any) {
           </ResponsiveContainer>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
             {sources.map((s: any, i: number) => (
-              <span key={s.source} style={{ fontSize: 11, fontFamily: 'monospace', color: COLORS[i % COLORS.length], display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span key={s.source} style={{ fontSize: 12, fontFamily: 'monospace', color: COLORS[i % COLORS.length], display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: COLORS[i % COLORS.length], display: 'inline-block' }} />
                 {s.source}
               </span>
@@ -252,8 +265,8 @@ function AnalyticsTab({ analytics }: any) {
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={sections.length ? sections : [{ section: 'No data', avgTimeMs: 0 }]} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-              <XAxis type="number" tick={{ fontSize: 11, fill: '#52525b' }} />
-              <YAxis dataKey="section" type="category" tick={{ fontSize: 11, fill: '#52525b' }} width={100} />
+              <XAxis type="number" tick={{ fontSize: 12, fill: '#52525b' }} />
+              <YAxis dataKey="section" type="category" tick={{ fontSize: 12, fill: '#52525b' }} width={100} />
               <Tooltip contentStyle={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} />
               <Bar dataKey="avgTimeMs" fill="#fafafa" radius={[0, 4, 4, 0]} />
             </BarChart>
@@ -291,7 +304,7 @@ function ScoreTab({ portfolio }: any) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 24 }}>AI Score</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 28 }}>AI Score</h1>
 
       <div style={{ display: 'flex', gap: 40, alignItems: 'flex-start' }}>
         {/* Big Score Circle */}
@@ -317,7 +330,7 @@ function ScoreTab({ portfolio }: any) {
           {dimensions.map((dim) => (
             <div key={dim.label} style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontSize: 13 }}>{dim.label}</span>
+                <span style={{ fontSize: 14 }}>{dim.label}</span>
                 <span style={{ fontFamily: 'monospace', fontSize: 12, color: '#71717a' }}>{dim.value}/{dim.max}</span>
               </div>
               <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
@@ -379,7 +392,7 @@ function ImproveTab({ portfolio }: any) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 24 }}>Improve</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 28 }}>Improve</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
         {/* JD Matcher */}
@@ -442,8 +455,8 @@ function ImproveTab({ portfolio }: any) {
                 return (
                   <div key={item.skill} style={{ marginBottom: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 13, color: userHas ? '#fafafa' : '#71717a' }}>{item.skill}</span>
-                      <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#52525b' }}>{item.demandPercentage}%</span>
+                      <span style={{ fontSize: 14, color: userHas ? '#fafafa' : '#71717a' }}>{item.skill}</span>
+                      <span style={{ fontFamily: 'monospace', fontSize: 12, color: '#52525b' }}>{item.demandPercentage}%</span>
                     </div>
                     <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
                       <div style={{
@@ -474,7 +487,7 @@ function SettingsTab({ user }: any) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 24 }}>Settings</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 28 }}>Settings</h1>
       <div className="glass" style={{ padding: 24, maxWidth: 480 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
@@ -509,10 +522,9 @@ function SettingsTab({ user }: any) {
 /* ─── Helpers ─── */
 function AnimatedCounter({ value }: { value: number }) {
   const [display, setDisplay] = useState(0)
-  const ref = useRef<ReturnType<typeof requestAnimationFrame>>()
+  const ref = useRef<number>(0)
 
   useEffect(() => {
-    let start = 0
     const duration = 1000
     const startTime = Date.now()
 
@@ -534,7 +546,7 @@ function AnimatedCounter({ value }: { value: number }) {
 function StatRow({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-      <span style={{ fontSize: 13, color: '#71717a' }}>{label}</span>
+      <span style={{ fontSize: 14, color: '#71717a' }}>{label}</span>
       <span style={{ fontSize: 14, fontWeight: 600 }}>{value}</span>
     </div>
   )

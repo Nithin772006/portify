@@ -21,7 +21,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
   return (
     <aside style={{
-      width: 240,
+      width: 280,
       minHeight: '100vh',
       background: 'rgba(255,255,255,0.02)',
       borderRight: '1px solid rgba(255,255,255,0.08)',
@@ -37,8 +37,9 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         onClick={() => navigate('/')}
         style={{
           fontFamily: 'monospace',
-          fontWeight: 'bold',
+          fontWeight: 700,
           fontSize: 18,
+          letterSpacing: '0.01em',
           cursor: 'pointer',
           marginBottom: 40,
           display: 'flex',
@@ -59,13 +60,14 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               display: 'block',
               width: '100%',
               textAlign: 'left',
-              padding: '10px 12px',
+              padding: '12px 16px',
               borderRadius: 8,
               border: 'none',
               background: activeTab === item.tab ? 'rgba(255,255,255,0.08)' : 'transparent',
               color: activeTab === item.tab ? '#fafafa' : '#a1a1aa',
               fontFamily: 'monospace',
-              fontSize: 13,
+              fontSize: 15,
+              letterSpacing: '0.01em',
               cursor: 'pointer',
               marginBottom: 4,
               transition: 'all 0.15s ease',
@@ -91,13 +93,14 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             display: 'block',
             width: '100%',
             textAlign: 'left',
-            padding: '10px 12px',
+            padding: '12px 16px',
             borderRadius: 8,
             border: '1px solid rgba(255,255,255,0.08)',
             background: 'transparent',
             color: '#a1a1aa',
             fontFamily: 'monospace',
-            fontSize: 13,
+            fontSize: 15,
+            letterSpacing: '0.01em',
             cursor: 'pointer',
             marginTop: 16,
             transition: 'all 0.15s ease',
@@ -119,13 +122,14 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           navigate('/login')
         }}
         style={{
-          padding: '10px 12px',
+          padding: '10px 16px',
           borderRadius: 8,
           border: '1px solid rgba(255,255,255,0.06)',
           background: 'transparent',
           color: '#52525b',
           fontFamily: 'monospace',
-          fontSize: 12,
+          fontSize: 14,
+          letterSpacing: '0.01em',
           cursor: 'pointer',
           transition: 'all 0.15s ease',
         }}
