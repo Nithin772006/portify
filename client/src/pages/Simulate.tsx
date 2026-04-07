@@ -92,9 +92,8 @@ export default function Simulate() {
   const engagementScore = Math.round(attentionZones.reduce((s, z) => s + z.weight, 0) / attentionZones.length * 100)
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      {/* Left: iframe with heatmap overlay */}
-      <div style={{ flex: 1, position: 'relative', borderRight: '1px solid var(--border)' }}>
+    <div className="simulate-layout">
+      <div className="simulate-preview-panel">
         <iframe
           ref={iframeRef}
           src={previewUrl}
@@ -123,19 +122,18 @@ export default function Simulate() {
         )}
       </div>
 
-      {/* Right: controls + results */}
-      <div style={{ width: 420, padding: 32, overflowY: 'auto', background: themeText.panel }}>
+      <div className="simulate-side-panel">
         <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: themeText.muted, fontFamily: 'monospace', fontSize: 12, cursor: 'pointer', marginBottom: 24 }}>
           Back to Dashboard
         </button>
 
-        <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 8 }}>Recruiter Simulation</h2>
-        <p style={{ fontSize: 13, color: themeText.muted, marginBottom: 24, lineHeight: 1.6 }}>
+        <h2 className="simulate-title">Recruiter Simulation</h2>
+        <p className="simulate-description">
           See what a recruiter focuses on when they spend 6 seconds on your portfolio.
         </p>
 
         {!running && !done && (
-          <button className="glass-btn large" onClick={startSimulation} style={{ width: '100%', justifyContent: 'center' }}>
+          <button className="glass-btn large simulate-start-button" onClick={startSimulation}>
             Start 6-Second Simulation
           </button>
         )}
@@ -185,7 +183,7 @@ export default function Simulate() {
               </div>
             </div>
 
-            <button className="glass-btn" onClick={startSimulation} style={{ width: '100%', justifyContent: 'center' }}>
+            <button className="glass-btn simulate-start-button" onClick={startSimulation}>
               Run Again
             </button>
           </motion.div>

@@ -16,144 +16,72 @@ interface SidebarProps {
   onTabChange: (tab: string) => void
 }
 
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.5" />
+      <path d="M12 2.5v2.2M12 19.3v2.2M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" />
+    </svg>
+  )
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M20.4 14.5A8.5 8.5 0 0 1 9.5 3.6a8.7 8.7 0 1 0 10.9 10.9Z" />
+    </svg>
+  )
+}
+
 export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const navigate = useNavigate()
   const { logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
 
   return (
-    <aside style={{
-      width: 320,
-      minHeight: '100vh',
-      background: 'var(--panel)',
-      borderRight: '1px solid var(--border)',
-      padding: '28px 20px',
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      letterSpacing: '0.01em',
-    }}>
-      <div
-        onClick={() => navigate('/')}
-        style={{
-          fontFamily: 'monospace',
-          fontWeight: 700,
-          fontSize: 22,
-          letterSpacing: '0.01em',
-          cursor: 'pointer',
-          marginBottom: 44,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <span className="pulse-dot">●</span>
-        Portify
+    <aside className="dashboard-sidebar">
+      <div onClick={() => navigate('/')} className="sidebar-brand" role="button" tabIndex={0} onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          navigate('/')
+        }
+      }}>
+        <span className="sidebar-brand-dot pulse-dot" aria-hidden="true" />
+        <span className="sidebar-brand-text">Portify</span>
       </div>
 
-      <nav style={{ flex: 1 }}>
-        {navItems.map(item => (
+      <nav className="sidebar-nav">
+        {navItems.map((item) => (
           <button
             key={item.tab}
+            type="button"
+            className={`sidebar-nav-item${activeTab === item.tab ? ' is-active' : ''}`}
+            data-tab={item.tab}
             onClick={() => onTabChange(item.tab)}
-            style={{
-              display: 'block',
-              width: '100%',
-              textAlign: 'left',
-              padding: '14px 18px',
-              borderRadius: 10,
-              border: 'none',
-              background: activeTab === item.tab ? 'var(--card-hover)' : 'transparent',
-              color: activeTab === item.tab ? 'var(--fg)' : 'var(--muted-strong)',
-              fontFamily: 'monospace',
-              fontSize: 16,
-              letterSpacing: '0.01em',
-              cursor: 'pointer',
-              marginBottom: 6,
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== item.tab) {
-                e.currentTarget.style.background = 'var(--card)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== item.tab) {
-                e.currentTarget.style.background = 'transparent'
-              }
-            }}
           >
             {item.label}
           </button>
         ))}
 
-        <button
-          onClick={() => navigate('/dashboard/simulate')}
-          style={{
-            display: 'block',
-            width: '100%',
-            textAlign: 'left',
-            padding: '14px 18px',
-            borderRadius: 10,
-            border: '1px solid var(--border)',
-            background: 'transparent',
-            color: 'var(--muted-strong)',
-            fontFamily: 'monospace',
-            fontSize: 16,
-            letterSpacing: '0.01em',
-            cursor: 'pointer',
-            marginTop: 18,
-            transition: 'all 0.15s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--card)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent'
-          }}
-        >
-          🎯 Simulate
+        <button type="button" onClick={() => navigate('/dashboard/simulate')} className="sidebar-simulate-button">
+          <span className="dark-theme-only">Simulate</span>
+          <span className="light-theme-only">Simulate</span>
         </button>
       </nav>
 
-      <button
-        onClick={toggleTheme}
-        style={{
-          padding: '12px 18px',
-          borderRadius: 10,
-          border: '1px solid var(--border)',
-          background: 'transparent',
-          color: 'var(--fg)',
-          fontFamily: 'monospace',
-          fontSize: 15,
-          letterSpacing: '0.01em',
-          cursor: 'pointer',
-          transition: 'all 0.15s ease',
-          marginBottom: 12,
-        }}
-      >
-        Switch to {theme === 'dark' ? 'Light' : 'Dark'} Theme
+      <button type="button" onClick={toggleTheme} className="sidebar-theme-toggle" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+        <span className="sidebar-theme-icon">
+          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </span>
+        <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
       </button>
 
       <button
+        type="button"
+        className="sidebar-signout-button dark-theme-only"
         onClick={async () => {
           await logout()
           navigate('/login')
-        }}
-        style={{
-          padding: '12px 18px',
-          borderRadius: 10,
-          border: '1px solid var(--border)',
-          background: 'transparent',
-          color: 'var(--muted)',
-          fontFamily: 'monospace',
-          fontSize: 15,
-          letterSpacing: '0.01em',
-          cursor: 'pointer',
-          transition: 'all 0.15s ease',
         }}
       >
         Sign Out

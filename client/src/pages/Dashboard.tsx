@@ -27,14 +27,6 @@ const themeText = {
   chipText: 'var(--chip-text)',
 }
 
-const pageTitleStyle: CSSProperties = {
-  fontSize: 34,
-  fontWeight: 800,
-  letterSpacing: '-0.02em',
-  marginBottom: 36,
-  color: themeText.primary,
-}
-
 const dashboardButtonStyle: CSSProperties = {
   fontSize: 16,
   padding: '14px 28px',
@@ -43,17 +35,43 @@ const dashboardButtonStyle: CSSProperties = {
   fontWeight: 600,
 }
 
-const chartTickStyle = { fontSize: 13, fill: 'var(--muted)' } as const
+const chartTickStyle = { fontSize: 13, fill: 'var(--chart-tick)' } as const
 
 const chartTooltipStyle: CSSProperties = {
   background: 'var(--bg-elevated)',
-  border: '1px solid var(--border)',
+  border: '1px solid var(--tooltip-border)',
   borderRadius: 10,
   fontSize: 15,
   color: 'var(--fg)',
+  boxShadow: 'var(--tooltip-shadow)',
 }
 
 const chartColors = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'] as const
+const chartDotStyle = { fill: 'var(--chart-line)', r: 4, stroke: 'none' } as const
+const chartActiveDotStyle = {
+  fill: 'var(--text-accent)',
+  r: 6,
+  stroke: 'none',
+  filter: 'drop-shadow(0 0 6px var(--chart-line))',
+} as const
+
+function getLightScoreRingColor(score: number) {
+  if (score >= 80) return '#10b981'
+  if (score >= 60) return '#f59e0b'
+  return '#ef4444'
+}
+
+function getDarkScoreRingColor(score: number) {
+  if (score > 70) return '#34d399'
+  if (score > 40) return '#fbbf24'
+  return '#ef4444'
+}
+
+function getDarkScoreRingShadow(score: number) {
+  if (score > 70) return 'rgba(52, 211, 153, 0.6)'
+  if (score > 40) return 'rgba(251, 191, 36, 0.4)'
+  return 'rgba(239, 68, 68, 0.4)'
+}
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -102,9 +120,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="dashboard-shell">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <main style={{ marginLeft: 320, flex: 1, padding: 48, lineHeight: 1.7 }}>
+      <main className="dashboard-main">
         {activeTab === 'overview' && <OverviewTab portfolio={portfolio} analytics={analytics} />}
         {activeTab === 'portfolio' && <PortfolioTab portfolio={portfolio} onRegenerate={loadData} onDeleteSuccess={handlePortfolioDeleted} />}
         {activeTab === 'analytics' && <AnalyticsTab analytics={analytics} />}
@@ -123,10 +141,10 @@ function OverviewTab({ portfolio, analytics }: any) {
   const publicPortfolioUrl = buildPortfolioUrl(portfolio?.portfolioId)
 
   const stats = [
-    { label: 'Portfolio Score', value: portfolio?.score || 0, suffix: '/100' },
-    { label: 'Total Views', value: analytics?.totalViews || 0, suffix: '' },
-    { label: 'Unique Visitors', value: analytics?.uniqueVisitors || 0, suffix: '' },
-    { label: 'Avg. Time on Page', value: Math.round(analytics?.avgTimeOnPage || 0), suffix: 's' },
+    { key: 'score', label: 'Portfolio Score', value: portfolio?.score || 0, suffix: '/100' },
+    { key: 'views', label: 'Total Views', value: analytics?.totalViews || 0, suffix: '' },
+    { key: 'visitors', label: 'Unique Visitors', value: analytics?.uniqueVisitors || 0, suffix: '' },
+    { key: 'time', label: 'Avg. Time on Page', value: Math.round(analytics?.avgTimeOnPage || 0), suffix: 's' },
   ]
 
   const copyLink = () => {
@@ -136,43 +154,46 @@ function OverviewTab({ portfolio, analytics }: any) {
   }
 
   return (
-    <div>
-      <h1 style={pageTitleStyle}>Overview</h1>
+    <div className="dashboard-page" data-page="overview">
+      <h1 className="dashboard-title">Overview</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 28 }}>
+      <div className="overview-stats-grid">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
-            className="glass"
+            className="glass overview-stat-card"
+            data-stat={stat.key}
             style={{ padding: 40, minHeight: 150 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <div style={{ fontSize: 14, fontFamily: 'monospace', color: themeText.muted, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 10 }}>
+            <div className="overview-stat-label">
               {stat.label}
             </div>
-            <div style={{ fontSize: 56, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
-              <AnimatedCounter value={stat.value} />
-              <span style={{ fontSize: 20, color: themeText.muted, fontWeight: 400, verticalAlign: 'middle' }}>{stat.suffix}</span>
+            <div className="overview-stat-value">
+              <span className="overview-stat-number">
+                <AnimatedCounter value={stat.value} />
+              </span>
+              <span className="overview-stat-suffix">{stat.suffix}</span>
             </div>
           </motion.div>
         ))}
       </div>
 
       {/* Portfolio URL */}
-      <div className="glass" style={{ padding: '28px 32px', marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="glass overview-url-card">
         <div>
-          <div style={{ fontSize: 13, fontFamily: 'monospace', color: themeText.muted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>YOUR PORTFOLIO URL</div>
-          <div style={{ fontFamily: 'monospace', fontSize: 17, color: themeText.primary }}>
+          <div className="overview-url-meta">Your Portfolio URL</div>
+          <div className="overview-url-text">
             {publicPortfolioUrl}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button className="glass-btn small" onClick={copyLink} style={dashboardButtonStyle}>
+        <div className="overview-url-actions">
+          <button className="glass-btn small overview-url-button--copy" onClick={copyLink} style={dashboardButtonStyle}>
             {copied ? '✓ Copied' : 'Copy Link'}
           </button>
-          <a href={publicPortfolioUrl} target="_blank" rel="noreferrer" className="glass-btn small" style={{ ...dashboardButtonStyle, textDecoration: 'none' }}>
+          <a href={publicPortfolioUrl} target="_blank" rel="noreferrer" className="glass-btn small overview-url-button--live" style={{ ...dashboardButtonStyle, textDecoration: 'none' }}>
             View Live
           </a>
         </div>
@@ -289,12 +310,12 @@ function PortfolioTab({ portfolio, onRegenerate, onDeleteSuccess }: any) {
   }
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 36 }}>
-        <h1 style={{ ...pageTitleStyle, marginBottom: 0 }}>My Portfolio</h1>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+    <div className="dashboard-page" data-page="portfolio">
+      <div className="portfolio-header">
+        <h1 className="dashboard-title" style={{ marginBottom: 0 }}>My Portfolio</h1>
+        <div className="portfolio-actions">
           <button
-            className="glass-btn small"
+            className="glass-btn small portfolio-action-button portfolio-action--export"
             onClick={handleExportZip}
             disabled={exportingZip || deletingPortfolio}
             style={{
@@ -315,7 +336,7 @@ function PortfolioTab({ portfolio, onRegenerate, onDeleteSuccess }: any) {
               : 'Export ZIP'}
           </button>
           <button
-            className="glass-btn small"
+            className="glass-btn small portfolio-action-button portfolio-action--delete"
             onClick={handleDeletePortfolio}
             disabled={deletingPortfolio || exportingZip || regenerating}
             style={{
@@ -327,16 +348,16 @@ function PortfolioTab({ portfolio, onRegenerate, onDeleteSuccess }: any) {
           >
             {deletingPortfolio ? <><div className="spinner" /> Deleting...</> : 'Delete Portfolio'}
           </button>
-          <button className="glass-btn small" onClick={handleRegenerate} disabled={regenerating || deletingPortfolio} style={dashboardButtonStyle}>
+          <button className="glass-btn small portfolio-action-button portfolio-action--regenerate" onClick={handleRegenerate} disabled={regenerating || deletingPortfolio} style={dashboardButtonStyle}>
             {regenerating ? <><div className="spinner" /> Regenerating...</> : 'Regenerate'}
           </button>
         </div>
       </div>
-      <div style={{ border: `1px solid ${themeText.border}`, borderRadius: 12, overflow: 'hidden', background: 'var(--bg-elevated)' }}>
+      <div className="portfolio-preview-shell">
         <iframe
           key={previewUrl}
           src={previewUrl}
-          style={{ width: '100%', height: 'min(760px, calc(100vh - 220px))', minHeight: 520, border: 'none', background: 'var(--bg-elevated)' }}
+          className="portfolio-preview-frame"
           title="Portfolio Preview"
           loading="lazy"
         />
@@ -353,27 +374,32 @@ function AnalyticsTab({ analytics }: any) {
   const devices = analytics?.deviceBreakdown || []
 
   return (
-    <div>
-      <h1 style={pageTitleStyle}>Analytics</h1>
+    <div className="dashboard-page" data-page="analytics">
+      <h1 className="dashboard-title">Analytics</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
-        {/* Views Chart */}
-        <div className="glass" style={{ padding: 32 }}>
-          <h3 style={{ fontSize: 16, fontFamily: 'monospace', color: themeText.muted, marginBottom: 18 }}>Views last 30 days</h3>
+      <div className="analytics-grid">
+        <div className="glass analytics-card">
+          <h3 className="dashboard-card-title" data-accent="overview">Views last 30 days</h3>
           <ResponsiveContainer width="100%" height={290}>
             <LineChart data={dailyViews.length ? dailyViews : [{ date: 'Today', views: 0 }]}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
               <XAxis dataKey="date" tick={chartTickStyle} />
               <YAxis tick={chartTickStyle} />
               <Tooltip contentStyle={chartTooltipStyle} />
-              <Line type="monotone" dataKey="views" stroke="var(--chart-1)" strokeWidth={2} dot={false} />
+              <Line
+                type="monotone"
+                dataKey="views"
+                stroke="var(--chart-line)"
+                strokeWidth={2}
+                dot={chartDotStyle}
+                activeDot={chartActiveDotStyle}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Traffic Sources */}
-        <div className="glass" style={{ padding: 32 }}>
-          <h3 style={{ fontSize: 16, fontFamily: 'monospace', color: themeText.muted, marginBottom: 18 }}>Traffic Sources</h3>
+        <div className="glass analytics-card">
+          <h3 className="dashboard-card-title" data-accent="analytics">Traffic Sources</h3>
           <ResponsiveContainer width="100%" height={290}>
             <PieChart>
               <Pie
@@ -403,24 +429,22 @@ function AnalyticsTab({ analytics }: any) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-        {/* Section Engagement */}
-        <div className="glass" style={{ padding: 32 }}>
-          <h3 style={{ fontSize: 16, fontFamily: 'monospace', color: themeText.muted, marginBottom: 18 }}>Section Engagement</h3>
+      <div className="analytics-grid secondary">
+        <div className="glass analytics-card">
+          <h3 className="dashboard-card-title" data-accent="improve">Section Engagement</h3>
           <ResponsiveContainer width="100%" height={290}>
             <BarChart data={sections.length ? sections : [{ section: 'No data', avgTimeMs: 0 }]} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
               <XAxis type="number" tick={chartTickStyle} />
               <YAxis dataKey="section" type="category" tick={chartTickStyle} width={100} />
               <Tooltip contentStyle={chartTooltipStyle} />
-              <Bar dataKey="avgTimeMs" fill="var(--chart-1)" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="avgTimeMs" fill="var(--chart-bar)" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Quick Stats */}
-        <div className="glass" style={{ padding: 32 }}>
-          <h3 style={{ fontSize: 16, fontFamily: 'monospace', color: themeText.muted, marginBottom: 18 }}>Quick Stats</h3>
+        <div className="glass analytics-card">
+          <h3 className="dashboard-card-title" data-accent="score">Quick Stats</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <StatRow label="Most used device" value={devices.length ? devices.reduce((a: any, b: any) => a.count > b.count ? a : b).device : 'N/A'} />
             <StatRow label="Total sessions" value={String(analytics?.uniqueVisitors || 0)} />
@@ -439,25 +463,79 @@ function ScoreTab({ portfolio }: any) {
   const circumference = 2 * Math.PI * 88
   const offset = circumference - (score / 100) * circumference
 
+  const lightScoreRingColor = getLightScoreRingColor(score)
+  const darkScoreRingColor = getDarkScoreRingColor(score)
   const dimensions = [
-    { label: 'Completeness', value: bd.completeness || 0, max: 20 },
-    { label: 'Skill Relevance', value: bd.skillScore || 0, max: 20 },
-    { label: 'Project Quality', value: bd.projectScore || 0, max: 20 },
-    { label: 'ATS Keywords', value: bd.atsScore || 0, max: 20 },
-    { label: 'Bio Strength', value: bd.bioScore || 0, max: 20 },
+    {
+      label: 'Completeness',
+      value: bd.completeness || 0,
+      max: 20,
+      tone: 'success',
+      color: '#10b981',
+      badge: 'Excellent',
+      darkFill: 'linear-gradient(90deg, #34d399, #10b981)',
+      darkShadow: '0 0 10px rgba(52, 211, 153, 0.5)',
+    },
+    {
+      label: 'Skill Relevance',
+      value: bd.skillScore || 0,
+      max: 20,
+      tone: 'indigo',
+      color: '#6366f1',
+      badge: 'Excellent',
+      darkFill: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
+      darkShadow: '0 0 10px rgba(99, 102, 241, 0.5)',
+    },
+    {
+      label: 'Project Quality',
+      value: bd.projectScore || 0,
+      max: 20,
+      tone: 'violet',
+      color: '#8b5cf6',
+      badge: 'Good',
+      darkFill: 'linear-gradient(90deg, #8b5cf6, #a78bfa)',
+      darkShadow: '0 0 10px rgba(139, 92, 246, 0.5)',
+    },
+    {
+      label: 'ATS Keywords',
+      value: bd.atsScore || 0,
+      max: 20,
+      tone: 'warning',
+      color: '#f59e0b',
+      badge: 'Needs Work',
+      darkFill: 'linear-gradient(90deg, #fbbf24, #f59e0b)',
+      darkShadow: '0 0 10px rgba(251, 191, 36, 0.4)',
+    },
+    {
+      label: 'Bio Strength',
+      value: bd.bioScore || 0,
+      max: 20,
+      tone: 'cyan',
+      color: '#06b6d4',
+      badge: 'Good',
+      darkFill: 'linear-gradient(90deg, #22d3ee, #06b6d4)',
+      darkShadow: '0 0 10px rgba(34, 211, 238, 0.4)',
+    },
   ]
 
   return (
-    <div>
-      <h1 style={pageTitleStyle}>AI Score</h1>
+    <div
+      className="dashboard-page score-page"
+      data-page="score"
+      style={{
+        ['--score-ring-color-light' as any]: lightScoreRingColor,
+        ['--score-ring-color-dark' as any]: darkScoreRingColor,
+        ['--score-ring-shadow' as any]: getDarkScoreRingShadow(score),
+      } as CSSProperties}
+    >
+      <h1 className="dashboard-title">AI Score</h1>
 
-      <div style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
-        {/* Big Score Circle */}
-        <div style={{ textAlign: 'center' }}>
+      <div className="score-layout">
+        <div className="score-ring-panel">
           <svg width="220" height="220" viewBox="0 0 220 220">
-            <circle cx="110" cy="110" r="88" fill="none" stroke="var(--track)" strokeWidth="10" />
+            <circle cx="110" cy="110" r="88" fill="none" stroke="var(--score-track)" strokeWidth="10" />
             <motion.circle
-              cx="110" cy="110" r="88" fill="none" stroke="var(--chart-1)" strokeWidth="10"
+              cx="110" cy="110" r="88" fill="none" stroke="var(--score-ring-color)" strokeWidth="10"
               strokeLinecap="round"
               strokeDasharray={circumference}
               initial={{ strokeDashoffset: circumference }}
@@ -465,25 +543,35 @@ function ScoreTab({ portfolio }: any) {
               transition={{ duration: 1.5, ease: 'easeOut' }}
               transform="rotate(-90 110 110)"
             />
-            <text x="110" y="105" textAnchor="middle" fill="var(--fg)" fontSize="48" fontWeight="900">{score}</text>
+            <text x="110" y="105" textAnchor="middle" fill="var(--score-number-color)" fontSize="48" fontWeight="900">{score}</text>
             <text x="110" y="132" textAnchor="middle" fill="var(--muted)" fontSize="16" fontFamily="monospace">out of 100</text>
           </svg>
         </div>
 
-        {/* Dimension Bars */}
         <div style={{ flex: 1 }}>
           {dimensions.map((dim) => (
-            <div key={dim.label} style={{ marginBottom: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontSize: 16 }}>{dim.label}</span>
-                <span style={{ fontFamily: 'monospace', fontSize: 13, color: themeText.muted }}>{dim.value}/{dim.max}</span>
+            <div
+              key={dim.label}
+              className="score-metric"
+              style={{
+                ['--metric-fill-light' as any]: dim.color,
+                ['--metric-fill-dark' as any]: dim.darkFill,
+                ['--metric-fill-shadow' as any]: dim.darkShadow,
+              } as CSSProperties}
+            >
+              <div className="score-metric-header">
+                <span className="score-metric-title">{dim.label}</span>
+                <div className="score-metric-meta">
+                  <span className="score-metric-value">{dim.value}/{dim.max}</span>
+                  <span className="score-metric-badge light-theme-only" data-tone={dim.tone}>{dim.badge}</span>
+                </div>
               </div>
-              <div style={{ height: 8, background: themeText.track, borderRadius: 4, overflow: 'hidden' }}>
+              <div className="score-metric-track">
                 <motion.div
+                  className="score-metric-fill"
                   initial={{ width: 0 }}
                   animate={{ width: `${(dim.value / dim.max) * 100}%` }}
                   transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
-                  style={{ height: '100%', background: 'var(--chart-1)', borderRadius: 4 }}
                 />
               </div>
             </div>
@@ -536,15 +624,14 @@ function ImproveTab({ portfolio }: any) {
   }
 
   return (
-    <div>
-      <h1 style={pageTitleStyle}>Improve</h1>
+    <div className="dashboard-page" data-page="improve">
+      <h1 className="dashboard-title">Improve</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28 }}>
-        {/* JD Matcher */}
-        <div>
-          <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Job Description Matcher</h3>
-          <textarea className="glass-input" value={jdText} onChange={e => setJdText(e.target.value)} placeholder="Paste a job description..." rows={6} />
-          <button className="glass-btn" style={{ ...dashboardButtonStyle, marginTop: 12 }} onClick={analyzeJD} disabled={jdLoading || !jdText.trim()}>
+      <div className="improve-grid">
+        <div className="glass improve-panel improve-panel--matcher">
+          <h3 className="improve-panel-title">Job Description Matcher</h3>
+          <textarea className="glass-input improve-input--matcher" value={jdText} onChange={e => setJdText(e.target.value)} placeholder="Paste a job description..." rows={6} />
+          <button className="glass-btn improve-button--matcher" style={{ ...dashboardButtonStyle, marginTop: 12 }} onClick={analyzeJD} disabled={jdLoading || !jdText.trim()}>
             {jdLoading ? <div className="spinner" /> : 'Analyze'}
           </button>
 
@@ -571,25 +658,24 @@ function ImproveTab({ portfolio }: any) {
           )}
         </div>
 
-        {/* Location Skill Insights */}
-        <div>
-          <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Location Skill Insights</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-            <select className="glass-input" value={city} onChange={e => setCity(e.target.value)}>
+        <div className="glass improve-panel improve-panel--insights">
+          <h3 className="improve-panel-title">Location Skill Insights</h3>
+          <div className="improve-select-grid">
+            <select className="glass-input improve-input--insight" value={city} onChange={e => setCity(e.target.value)}>
               <option value="chennai">Chennai</option>
               <option value="bangalore">Bangalore</option>
               <option value="new-york">New York</option>
               <option value="san-francisco">San Francisco</option>
               <option value="london">London</option>
             </select>
-            <select className="glass-input" value={role} onChange={e => setRole(e.target.value)}>
+            <select className="glass-input improve-input--insight" value={role} onChange={e => setRole(e.target.value)}>
               <option value="software-engineer">Software Engineer</option>
               <option value="ui-ux-designer">UI/UX Designer</option>
               <option value="data-scientist">Data Scientist</option>
               <option value="marketing-manager">Marketing Manager</option>
             </select>
           </div>
-          <button className="glass-btn" onClick={getTrending} disabled={trendingLoading} style={dashboardButtonStyle}>
+          <button className="glass-btn improve-button--insight" onClick={getTrending} disabled={trendingLoading} style={dashboardButtonStyle}>
             {trendingLoading ? <div className="spinner" /> : 'Get Insights'}
           </button>
 
@@ -631,24 +717,41 @@ function SettingsTab({ user }: any) {
   const [email, setEmail] = useState(user?.email || '')
 
   return (
-    <div>
-      <h1 style={pageTitleStyle}>Settings</h1>
-      <div className="glass" style={{ padding: 32, maxWidth: 560 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div className="dashboard-page" data-page="settings">
+      <h1 className="dashboard-title">Settings</h1>
+      <div className="glass settings-card">
+        <div className="settings-fields">
           <div>
-            <label style={{ fontSize: 13, fontFamily: 'monospace', color: themeText.muted, display: 'block', marginBottom: 8 }}>Name</label>
-            <input className="glass-input" value={name} onChange={e => setName(e.target.value)} />
+            <label className="settings-label">Name</label>
+            <input className="glass-input settings-input" value={name} onChange={e => setName(e.target.value)} />
           </div>
           <div>
-            <label style={{ fontSize: 13, fontFamily: 'monospace', color: themeText.muted, display: 'block', marginBottom: 8 }}>Email</label>
-            <input className="glass-input" value={email} onChange={e => setEmail(e.target.value)} />
+            <label className="settings-label">Email</label>
+            <input className="glass-input settings-input" value={email} onChange={e => setEmail(e.target.value)} />
           </div>
         </div>
       </div>
 
-      <div style={{ marginTop: 28, display: 'flex', gap: 12 }}>
+      <div className="settings-actions">
+        <button type="button" className="glass-btn settings-save-button light-theme-only" style={dashboardButtonStyle}>
+          Save Changes
+        </button>
         <button
-          className="glass-btn"
+          type="button"
+          className="glass-btn settings-signout-button light-theme-only"
+          style={dashboardButtonStyle}
+          onClick={async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+              await logout()
+              navigate('/login')
+            }
+          }}
+        >
+          Sign Out
+        </button>
+        <button
+          type="button"
+          className="glass-btn dark-theme-only"
           style={{ ...dashboardButtonStyle, borderColor: 'var(--danger-border)', color: 'var(--danger)' }}
           onClick={async () => {
             if (confirm('Are you sure you want to sign out?')) {
@@ -690,9 +793,9 @@ function AnimatedCounter({ value }: { value: number }) {
 
 function StatRow({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid var(--track)' }}>
-      <span style={{ fontSize: 16, color: themeText.muted }}>{label}</span>
-      <span style={{ fontSize: 16, fontWeight: 600 }}>{value}</span>
+    <div className="stat-row">
+      <span className="stat-row-label">{label}</span>
+      <span className="stat-row-value">{value}</span>
     </div>
   )
 }

@@ -21,6 +21,7 @@ import analyticsRoutes from './routes/analytics';
 import skillsRoutes from './routes/skills';
 import Portfolio from './models/Portfolio';
 import { getPortfolioHTMLPath } from './utils/templateEngine';
+import { buildPortfolioDocument } from './utils/portfolio3d';
 
 // Schema route import
 import professionSchemas from './config/schemas/professions.json';
@@ -109,6 +110,15 @@ function normalizeServedPortfolioHtml(html: string): string {
   );
 }
 
+function getRequestBaseUrl(req: express.Request): string {
+  const host = req.get('host') || 'localhost:3001';
+  return `${req.protocol}://${host}`;
+}
+
+function needsPortfolioHtmlRefresh(html: string): boolean {
+  return !html.includes('project-card-3d-fix');
+}
+
 // Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
@@ -119,15 +129,37 @@ app.use(cookieParser());
 
 // Public portfolio route
 app.get('/p/:portfolioId', async (req, res) => {
+  let generatedHtml = '';
+
   try {
-    const portfolio = await Portfolio.findOne({ portfolioId: req.params.portfolioId }).lean();
-    const generatedHtml = typeof portfolio?.generatedHTML === 'string' ? portfolio.generatedHTML.trim() : '';
+    const portfolio = await Portfolio.findOne({ portfolioId: req.params.portfolioId });
+    generatedHtml = typeof portfolio?.generatedHTML === 'string' ? portfolio.generatedHTML.trim() : '';
+
+    if (portfolio && (!generatedHtml || needsPortfolioHtmlRefresh(generatedHtml))) {
+      const bundle = await buildPortfolioDocument(portfolio.formData || {}, {
+        portfolioId: portfolio.portfolioId,
+        profession: portfolio.profession,
+        baseUrl: getRequestBaseUrl(req),
+        cookieHeader: req.headers.cookie,
+      });
+
+      portfolio.generatedContent = bundle.generatedContent;
+      portfolio.generatedHTML = bundle.generatedHTML;
+      portfolio.htmlPath = '';
+      await portfolio.save();
+      generatedHtml = bundle.generatedHTML;
+    }
+
     if (generatedHtml) {
-      res.type('html').send(generatedHtml);
+      res.type('html').send(normalizeServedPortfolioHtml(generatedHtml));
       return;
     }
   } catch (err) {
     console.error('Failed to load generated portfolio HTML:', err);
+    if (generatedHtml) {
+      res.type('html').send(normalizeServedPortfolioHtml(generatedHtml));
+      return;
+    }
   }
 
   const htmlPath = getPortfolioHTMLPath(req.params.portfolioId);
