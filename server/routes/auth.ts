@@ -1,14 +1,28 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { getDatabaseUnavailableMessage, isDatabaseConnected } from '../database';
 import User from '../models/User';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
+function ensureDatabaseAvailable(res: Response): boolean {
+  if (isDatabaseConnected()) {
+    return true;
+  }
+
+  res.status(503).json({ error: getDatabaseUnavailableMessage() });
+  return false;
+}
+
 // POST /api/auth/register
 router.post('/register', async (req: Request, res: Response) => {
   try {
+    if (!ensureDatabaseAvailable(res)) {
+      return;
+    }
+
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
@@ -53,6 +67,10 @@ router.post('/register', async (req: Request, res: Response) => {
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
   try {
+    if (!ensureDatabaseAvailable(res)) {
+      return;
+    }
+
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -101,6 +119,10 @@ router.post('/logout', (_req: Request, res: Response) => {
 // GET /api/auth/me
 router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
+    if (!ensureDatabaseAvailable(res)) {
+      return;
+    }
+
     const user = await User.findById(req.userId).select('-passwordHash');
     if (!user) {
       res.status(404).json({ error: 'User not found' });

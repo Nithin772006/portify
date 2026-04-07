@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
+import Portfolio from '../models/Portfolio';
 import { buildPortfolioDocument, renderPortfolioHtml } from '../utils/portfolio3d';
+import { extractSkillsFromJD, compareSkills } from '../utils/nlp';
 
 const router = Router();
 
@@ -414,7 +416,6 @@ router.post('/chat-design', authMiddleware, async (req: AuthRequest, res: Respon
       return;
     }
 
-    const Portfolio = (await import('../models/Portfolio')).default;
     const portfolio = await Portfolio.findOne({ portfolioId, userId: req.userId });
     if (!portfolio) {
       res.status(404).json({ error: 'Portfolio not found' });
@@ -667,9 +668,6 @@ router.post('/match-jd', authMiddleware, async (req: AuthRequest, res: Response)
       res.status(400).json({ error: 'Job description text is required' });
       return;
     }
-
-    const { extractSkillsFromJD, compareSkills } = await import('../utils/nlp');
-    const Portfolio = (await import('../models/Portfolio')).default;
 
     const portfolio = await Portfolio.findOne({ portfolioId });
     if (!portfolio) {

@@ -6,21 +6,27 @@ import trendingSkills from '../config/skills/trending.json';
 
 const router = Router();
 
+const configuredRedisUrl = process.env.REDIS_URL?.trim();
 let redis: Redis | null = null;
-try {
-  redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-    maxRetriesPerRequest: 1,
-    retryStrategy: (times) => {
-      if (times > 3) return null;
-      return Math.min(times * 200, 1000);
-    },
-    lazyConnect: true,
-  });
-  redis.connect().catch(() => {
+if (configuredRedisUrl) {
+  try {
+    redis = new Redis(configuredRedisUrl, {
+      maxRetriesPerRequest: 1,
+      retryStrategy: (times) => {
+        if (times > 3) return null;
+        return Math.min(times * 200, 1000);
+      },
+      lazyConnect: true,
+    });
+    redis.on('error', () => {
+      // Ignore background Redis connection errors and fall back to static data.
+    });
+    redis.connect().catch(() => {
+      redis = null;
+    });
+  } catch {
     redis = null;
-  });
-} catch {
-  redis = null;
+  }
 }
 
 // GET /api/skills/trending?city=X&role=Y

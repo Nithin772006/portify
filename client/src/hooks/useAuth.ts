@@ -1,19 +1,32 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || '/api'
+const normalizedApiBaseUrl = configuredApiBaseUrl.replace(/\/$/, '')
+
 const API = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: normalizedApiBaseUrl,
   withCredentials: true,
 })
 
-const API_ORIGIN =
-  typeof API.defaults.baseURL === 'string'
-    ? API.defaults.baseURL.replace(/\/api\/?$/, '')
-    : 'http://localhost:3001'
+function resolveApiOrigin() {
+  if (typeof window !== 'undefined') {
+    return new URL(normalizedApiBaseUrl, window.location.origin).origin
+  }
+
+  if (/^https?:\/\//i.test(normalizedApiBaseUrl)) {
+    return new URL(normalizedApiBaseUrl).origin
+  }
+
+  return 'http://localhost:3001'
+}
+
+const API_ORIGIN = resolveApiOrigin()
 
 function buildPortfolioUrl(portfolioId?: string | null, cacheBust?: string | number | null) {
   if (!portfolioId) return ''
-  const baseUrl = `${API_ORIGIN}/p/${portfolioId}`
+
+  const baseUrl = new URL(`/p/${portfolioId}`, API_ORIGIN).toString()
   if (cacheBust === undefined || cacheBust === null || cacheBust === '') {
     return baseUrl
   }
