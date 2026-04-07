@@ -5,6 +5,8 @@ export interface IPortfolio extends Document {
   portfolioId: string;
   profession: string;
   formData: Record<string, any>;
+  generatedContent?: Record<string, any>;
+  generatedHTML?: string;
   score: number;
   breakdown: {
     completeness: number;
@@ -14,7 +16,7 @@ export interface IPortfolio extends Document {
     bioScore: number;
   };
   suggestions: Array<{ text: string; pts: number; priority: string }>;
-  htmlPath: string;
+  htmlPath?: string;
   versions: Array<{ id: string; htmlPath: string; createdAt: Date }>;
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +27,8 @@ const PortfolioSchema = new Schema<IPortfolio>({
   portfolioId: { type: String, required: true, unique: true },
   profession: { type: String, required: true },
   formData: { type: Schema.Types.Mixed, required: true },
+  generatedContent: { type: Schema.Types.Mixed, default: null },
+  generatedHTML: { type: String, default: '' },
   score: { type: Number, default: 0 },
   breakdown: {
     completeness: { type: Number, default: 0 },
@@ -34,7 +38,7 @@ const PortfolioSchema = new Schema<IPortfolio>({
     bioScore: { type: Number, default: 0 },
   },
   suggestions: [{ text: String, pts: Number, priority: String }],
-  htmlPath: { type: String, required: true },
+  htmlPath: { type: String, default: '' },
   versions: [{ id: String, htmlPath: String, createdAt: { type: Date, default: Date.now } }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

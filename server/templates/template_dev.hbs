@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{name}} — {{title}}</title>
+<title>{{name}} - {{title}}</title>
 <meta name="description" content="{{bio}}">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:#0a0a0a;color:#fafafa;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.6;min-height:100vh}
-a{color:#fafafa;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);transition:border-color 0.2s}
+body{background:#0a0a0a;color:#fafafa;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.6;min-height:100vh;overflow-wrap:anywhere}
+a{color:#fafafa;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);transition:border-color 0.2s;overflow-wrap:anywhere}
 a:hover{border-color:rgba(255,255,255,0.6)}
 .container{max-width:800px;margin:0 auto;padding:60px 24px}
 .header{padding:80px 0 60px;border-bottom:1px solid rgba(255,255,255,0.08)}
@@ -19,7 +19,7 @@ a:hover{border-color:rgba(255,255,255,0.6)}
 .links{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap}
 .links a{font-size:13px;font-family:monospace;color:#a1a1aa;padding:6px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:9999px;transition:all 0.2s}
 .links a:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.25)}
-.bio{padding:48px 0;font-size:16px;color:#d4d4d8;line-height:1.8;border-bottom:1px solid rgba(255,255,255,0.08)}
+.bio{padding:48px 0;font-size:16px;color:#d4d4d8;line-height:1.8;border-bottom:1px solid rgba(255,255,255,0.08);white-space:pre-line}
 .section{padding:48px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
 .section-title{font-size:11px;font-family:monospace;color:#52525b;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:24px}
 .skills-grid{display:flex;flex-wrap:wrap;gap:8px}
@@ -27,10 +27,10 @@ a:hover{border-color:rgba(255,255,255,0.6)}
 .project-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:28px;margin-bottom:16px;transition:border-color 0.2s}
 .project-card:hover{border-color:rgba(255,255,255,0.2)}
 .project-title{font-size:18px;font-weight:700;margin-bottom:8px}
-.project-desc{font-size:14px;color:#a1a1aa;line-height:1.7;margin-bottom:12px}
+.project-desc{font-size:14px;color:#a1a1aa;line-height:1.7;margin-bottom:12px;white-space:pre-line}
 .project-tech{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .project-tech span{font-size:11px;font-family:monospace;color:#71717a;padding:4px 10px;background:rgba(255,255,255,0.04);border-radius:4px}
-.project-links{display:flex;gap:12px}
+.project-links{display:flex;gap:12px;flex-wrap:wrap}
 .project-links a{font-size:12px;font-family:monospace;color:#71717a;border-bottom:none;padding:4px 12px;border:1px solid rgba(255,255,255,0.08);border-radius:6px}
 .project-links a:hover{background:rgba(255,255,255,0.06)}
 .timeline-item{position:relative;padding-left:24px;margin-bottom:32px;border-left:1px solid rgba(255,255,255,0.1)}
@@ -38,7 +38,7 @@ a:hover{border-color:rgba(255,255,255,0.6)}
 .timeline-role{font-size:16px;font-weight:600}
 .timeline-company{font-size:14px;color:#a1a1aa;font-family:monospace}
 .timeline-date{font-size:12px;color:#52525b;font-family:monospace;margin-top:4px}
-.timeline-desc{font-size:14px;color:#a1a1aa;margin-top:8px;line-height:1.7}
+.timeline-desc{font-size:14px;color:#a1a1aa;margin-top:8px;line-height:1.7;white-space:pre-line}
 .edu-item{margin-bottom:20px}
 .edu-degree{font-size:16px;font-weight:600}
 .edu-school{font-size:14px;color:#a1a1aa}
@@ -57,11 +57,11 @@ a:hover{border-color:rgba(255,255,255,0.6)}
   <header class="header" data-section="name-title">
     <h1 class="name">{{name}}</h1>
     <p class="title-text">{{title}}</p>
-    {{#if location}}<p class="location">📍 {{location}}</p>{{/if}}
+    {{#if location}}<p class="location">{{location}}</p>{{/if}}
     <div class="links">
-      {{#if email}}<a href="mailto:{{email}}">Email</a>{{/if}}
-      {{#if linkedin}}<a href="{{linkedin}}" target="_blank">LinkedIn</a>{{/if}}
-      {{#if github}}<a href="{{github}}" target="_blank">GitHub</a>{{/if}}
+      {{#if email}}<a href="{{mailto email}}">Email</a>{{/if}}
+      {{#if linkedin}}<a href="{{safeHref linkedin}}" target="_blank" rel="noreferrer">LinkedIn</a>{{/if}}
+      {{#if github}}<a href="{{safeHref github}}" target="_blank" rel="noreferrer">GitHub</a>{{/if}}
     </div>
   </header>
 
@@ -91,8 +91,8 @@ a:hover{border-color:rgba(255,255,255,0.6)}
       </div>
       {{/if}}
       <div class="project-links">
-        {{#if this.githubUrl}}<a href="{{this.githubUrl}}" target="_blank">GitHub</a>{{/if}}
-        {{#if this.liveUrl}}<a href="{{this.liveUrl}}" target="_blank">Live</a>{{/if}}
+        {{#if this.githubUrl}}<a href="{{safeHref this.githubUrl}}" target="_blank" rel="noreferrer">GitHub</a>{{/if}}
+        {{#if this.liveUrl}}<a href="{{safeHref this.liveUrl}}" target="_blank" rel="noreferrer">Live</a>{{/if}}
       </div>
     </div>
     {{/each}}
@@ -106,26 +106,30 @@ a:hover{border-color:rgba(255,255,255,0.6)}
     <div class="timeline-item">
       <div class="timeline-role">{{this.role}}</div>
       <div class="timeline-company">{{this.company}}</div>
-      <div class="timeline-date">{{this.startDate}} — {{#if this.isPresent}}Present{{else}}{{this.endDate}}{{/if}}</div>
+      <div class="timeline-date">{{this.startDate}} - {{#if this.isPresent}}Present{{else}}{{this.endDate}}{{/if}}</div>
       {{#if this.description}}<p class="timeline-desc">{{this.description}}</p>{{/if}}
     </div>
     {{/each}}
   </section>
   {{/if}}
 
-  {{#if education}}
+  {{#if (hasContent education)}}
   <section class="section" data-section="education">
     <h2 class="section-title">Education</h2>
     <div class="edu-item">
-      <div class="edu-degree">{{education.degree}} in {{education.fieldOfStudy}}</div>
-      <div class="edu-school">{{education.institution}}</div>
-      <div class="edu-year">{{education.graduationYear}}</div>
+      {{#if education.degree}}
+      <div class="edu-degree">{{education.degree}}{{#if education.fieldOfStudy}} in {{education.fieldOfStudy}}{{/if}}</div>
+      {{else}}
+      {{#if education.fieldOfStudy}}<div class="edu-degree">{{education.fieldOfStudy}}</div>{{/if}}
+      {{/if}}
+      {{#if education.institution}}<div class="edu-school">{{education.institution}}</div>{{/if}}
+      {{#if education.graduationYear}}<div class="edu-year">{{education.graduationYear}}</div>{{/if}}
     </div>
   </section>
   {{/if}}
 
   <footer class="footer">
-    Built with Portify · {{currentYear}}
+    Built with Portify | {{currentYear}}
   </footer>
 </div>
 

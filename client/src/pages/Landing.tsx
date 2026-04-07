@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import DotWave from '../components/DotWave'
 import Navbar from '../components/Navbar'
 
 const professions = [
@@ -9,13 +8,15 @@ const professions = [
 ]
 
 const marqueeText = '✦ Developer ✦ Designer ✦ Doctor ✦ Marketer ✦ Architect ✦ Photographer ✦ Data Scientist ✦ Lawyer ✦ Chef ✦ Freelancer ✦ Engineer ✦ Researcher '
+const mutedText = 'var(--muted)'
+const mutedStrongText = 'var(--muted-strong)'
 
 export default function Landing() {
   const navigate = useNavigate()
 
   return (
-    <div>
-      <DotWave />
+    <div style={{ position: 'relative', isolation: 'isolate' }}>
+      <div className="static-page-backdrop" />
       <Navbar />
 
       {/* Hero Section */}
@@ -31,9 +32,9 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
             className="glass"
-            style={{ padding: '6px 16px', fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.15em', color: '#a1a1aa', borderRadius: 9999 }}
+            style={{ padding: '8px 18px', fontFamily: 'monospace', fontSize: 13, letterSpacing: '0.15em', color: mutedStrongText, borderRadius: 9999 }}
           >
-            ✦ AI-Powered
+            AI-Powered
           </motion.div>
 
           <motion.h1
@@ -50,7 +51,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            style={{ fontFamily: 'monospace', fontSize: 16, color: '#71717a', maxWidth: 400 }}
+            style={{ fontFamily: 'monospace', fontSize: 18, color: mutedText, maxWidth: 520, lineHeight: 1.6 }}
           >
             Tell us your profession. We handle the rest.
           </motion.p>
@@ -62,25 +63,25 @@ export default function Landing() {
             style={{ display: 'flex', gap: 20, alignItems: 'center', marginTop: 8 }}
           >
             <button className="glass-btn large" onClick={() => navigate('/register')}>
-              Build Mine →
+              Build Mine
             </button>
             <a
               href="#how-it-works"
-              style={{ fontFamily: 'monospace', fontSize: 13, color: '#71717a', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 2 }}
+              style={{ fontFamily: 'monospace', fontSize: 15, color: mutedText, borderBottom: '1px solid var(--border)', paddingBottom: 2 }}
             >
-              See how it works ↓
+              See how it works
             </a>
           </motion.div>
         </motion.div>
       </section>
 
       {/* Marquee Strip */}
-      <div style={{ width: '100%', background: '#fafafa', color: '#0a0a0a', padding: '14px 0', overflow: 'hidden', marginTop: 80 }}>
+      <div style={{ width: '100%', background: 'var(--marquee-bg)', color: 'var(--marquee-fg)', padding: '18px 0', overflow: 'hidden', marginTop: 96 }}>
         <div className="marquee-track">
-          <span style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 500, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: 'monospace', fontSize: 15, fontWeight: 500, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
             {marqueeText}
           </span>
-          <span style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 500, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: 'monospace', fontSize: 15, fontWeight: 500, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
             {marqueeText}
           </span>
         </div>
@@ -88,7 +89,7 @@ export default function Landing() {
 
       {/* How It Works */}
       <section id="how-it-works" style={{ padding: '120px 40px', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#52525b', letterSpacing: '0.15em', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 13, color: mutedStrongText, letterSpacing: '0.15em', marginBottom: 12 }}>
           HOW IT WORKS
         </div>
         <h2 style={{ fontSize: 'clamp(40px, 6vw, 64px)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 60 }}>
@@ -108,13 +109,13 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              style={{ padding: '40px 32px' }}
+              style={{ padding: '44px 36px' }}
             >
-              <div style={{ fontFamily: 'monospace', fontSize: 80, fontWeight: 900, color: 'rgba(255,255,255,0.06)', lineHeight: 1, marginBottom: 16 }}>
+              <div style={{ fontFamily: 'monospace', fontSize: 80, fontWeight: 900, color: 'var(--track-strong)', lineHeight: 1, marginBottom: 16 }}>
                 {step.num}
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>{step.title}</h3>
-              <p style={{ fontSize: 14, color: '#71717a', lineHeight: 1.6 }}>{step.desc}</p>
+              <h3 style={{ fontSize: 24, fontWeight: 700, marginBottom: 10 }}>{step.title}</h3>
+              <p style={{ fontSize: 16, color: mutedText, lineHeight: 1.7 }}>{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -122,7 +123,7 @@ export default function Landing() {
 
       {/* Features Bento Grid */}
       <section style={{ padding: '80px 40px', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#52525b', letterSpacing: '0.15em', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 13, color: mutedStrongText, letterSpacing: '0.15em', marginBottom: 12 }}>
           WHAT MAKES IT DIFFERENT
         </div>
         <h2 style={{ fontSize: 'clamp(40px, 6vw, 64px)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 40 }}>
@@ -132,34 +133,34 @@ export default function Landing() {
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 16 }}>
           {/* Left Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <motion.div className="glass" style={{ padding: '40px 32px', flex: 1 }}
+            <motion.div className="glass" style={{ padding: '44px 36px', flex: 1 }}
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Scores your portfolio</h3>
-              <p style={{ fontSize: 14, color: '#71717a', lineHeight: 1.7 }}>AI rates it 0–100. Tells you exactly what's weak and why.</p>
+              <h3 style={{ fontSize: 26, fontWeight: 700, marginBottom: 14 }}>Scores your portfolio</h3>
+              <p style={{ fontSize: 16, color: mutedText, lineHeight: 1.7 }}>AI rates it 0-100. Tells you exactly what's weak and why.</p>
             </motion.div>
-            <motion.div className="glass" style={{ padding: '40px 32px', flex: 1 }}
+            <motion.div className="glass" style={{ padding: '44px 36px', flex: 1 }}
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Reads job descriptions</h3>
-              <p style={{ fontSize: 14, color: '#71717a', lineHeight: 1.7 }}>Paste any JD. We rewrite your portfolio around it.</p>
+              <h3 style={{ fontSize: 26, fontWeight: 700, marginBottom: 14 }}>Reads job descriptions</h3>
+              <p style={{ fontSize: 16, color: mutedText, lineHeight: 1.7 }}>Paste any JD. We rewrite your portfolio around it.</p>
             </motion.div>
           </div>
 
           {/* Right Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <motion.div className="glass" style={{ padding: '28px 24px' }}
+            <motion.div className="glass" style={{ padding: '32px 28px' }}
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.05 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>ATS-ready output</h3>
-              <p style={{ fontSize: 13, color: '#71717a', lineHeight: 1.6 }}>Passes recruiter filters automatically.</p>
+              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>ATS-ready output</h3>
+              <p style={{ fontSize: 15, color: mutedText, lineHeight: 1.6 }}>Passes recruiter filters automatically.</p>
             </motion.div>
-            <motion.div className="glass" style={{ padding: '28px 24px' }}
+            <motion.div className="glass" style={{ padding: '32px 28px' }}
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Recruiter simulation</h3>
-              <p style={{ fontSize: 13, color: '#71717a', lineHeight: 1.6 }}>See what a recruiter focuses on in 6 seconds.</p>
+              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>Recruiter simulation</h3>
+              <p style={{ fontSize: 15, color: mutedText, lineHeight: 1.6 }}>See what a recruiter focuses on in 6 seconds.</p>
             </motion.div>
-            <motion.div className="glass" style={{ padding: '28px 24px' }}
+            <motion.div className="glass" style={{ padding: '32px 28px' }}
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.15 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Location skill insights</h3>
-              <p style={{ fontSize: 13, color: '#71717a', lineHeight: 1.6 }}>Know which skills are trending in your city.</p>
+              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>Location skill insights</h3>
+              <p style={{ fontSize: 15, color: mutedText, lineHeight: 1.6 }}>Know which skills are trending in your city.</p>
             </motion.div>
           </div>
         </div>
@@ -167,7 +168,7 @@ export default function Landing() {
 
       {/* Professions Grid */}
       <section style={{ padding: '80px 40px', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#52525b', letterSpacing: '0.15em', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 13, color: mutedStrongText, letterSpacing: '0.15em', marginBottom: 12 }}>
           FOR EVERY CAREER
         </div>
         <h2 style={{ fontSize: 'clamp(40px, 6vw, 64px)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 40 }}>
@@ -180,25 +181,25 @@ export default function Landing() {
               key={prof}
               whileHover={{ scale: 1.02 }}
               style={{
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid var(--border)',
                 borderRadius: 9999,
-                padding: '12px 20px',
+                padding: '14px 22px',
                 fontFamily: 'monospace',
-                fontSize: 13,
-                color: '#a1a1aa',
+                fontSize: 15,
+                color: mutedStrongText,
                 textAlign: 'center',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#fafafa'
-                e.currentTarget.style.color = '#0a0a0a'
-                e.currentTarget.style.borderColor = '#fafafa'
+                e.currentTarget.style.background = 'var(--fg)'
+                e.currentTarget.style.color = 'var(--bg)'
+                e.currentTarget.style.borderColor = 'var(--fg)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = '#a1a1aa'
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+                e.currentTarget.style.color = 'var(--muted-strong)'
+                e.currentTarget.style.borderColor = 'var(--border)'
               }}
             >
               {prof}
@@ -219,24 +220,24 @@ export default function Landing() {
         >
           Build your portfolio
         </button>
-        <p style={{ fontFamily: 'monospace', fontSize: 12, color: '#52525b', marginTop: 16 }}>
+        <p style={{ fontFamily: 'monospace', fontSize: 14, color: mutedStrongText, marginTop: 18 }}>
           No account needed. No code. No design skills.
         </p>
       </section>
 
       {/* Footer */}
       <footer style={{
-        borderTop: '1px solid rgba(255,255,255,0.08)',
+        borderTop: '1px solid var(--border)',
         padding: '24px 40px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}>
-        <div style={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
           <span className="pulse-dot">●</span> Portify
         </div>
-        <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#52525b' }}>
-          Built at Rajalakshmi Engineering College · 2025
+        <div style={{ fontFamily: 'monospace', fontSize: 13, color: mutedStrongText }}>
+          Built at Rajalakshmi Engineering College - 2025
         </div>
       </footer>
     </div>

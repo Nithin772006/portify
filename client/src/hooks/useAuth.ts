@@ -6,6 +6,20 @@ const API = axios.create({
   withCredentials: true,
 })
 
+const API_ORIGIN =
+  typeof API.defaults.baseURL === 'string'
+    ? API.defaults.baseURL.replace(/\/api\/?$/, '')
+    : 'http://localhost:3001'
+
+function buildPortfolioUrl(portfolioId?: string | null, cacheBust?: string | number | null) {
+  if (!portfolioId) return ''
+  const baseUrl = `${API_ORIGIN}/p/${portfolioId}`
+  if (cacheBust === undefined || cacheBust === null || cacheBust === '') {
+    return baseUrl
+  }
+  return `${baseUrl}?v=${encodeURIComponent(String(cacheBust))}`
+}
+
 interface User {
   id: string
   name: string
@@ -51,4 +65,4 @@ export function useAuth() {
   return { user, loading, login, register, logout, checkAuth }
 }
 
-export { API }
+export { API, API_ORIGIN, buildPortfolioUrl }

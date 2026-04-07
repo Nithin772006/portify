@@ -1,23 +1,43 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { API } from '../hooks/useAuth';
 
-export default function AIChatAgent({ portfolioId, onDesignApplied }: { portfolioId: string, onDesignApplied: () => void }) {
+type ChatMessage = { role: string; content: string };
+
+export default function AIChatAgent({
+  portfolioId,
+  onDesignApplied,
+}: {
+  portfolioId: string;
+  onDesignApplied: () => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{role: string, content: string}[]>([
-    { role: 'assistant', content: 'Hi! I am your AI Design Agent. How would you like to customize your portfolio today? (e.g. "make the background dark", "add rounded corners", "import styles matching 21st.dev")' }
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: 'assistant',
+      content:
+        'Hi! I am your Portify copilot. Ask me anything about your portfolio, writing, skills, design, or job prep. I can answer questions and apply portfolio changes when you ask for them.',
+    },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const msgEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     msgEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 80);
+    return () => window.clearTimeout(timer);
+  }, [isOpen, loading]);
+
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
-    const newMsg = { role: 'user', content: input };
+
+    const newMsg = { role: 'user', content: input.trim() };
     setMessages(prev => [...prev, newMsg]);
     setInput('');
     setLoading(true);
@@ -26,22 +46,45 @@ export default function AIChatAgent({ portfolioId, onDesignApplied }: { portfoli
       const res = await API.post('/ai/chat-design', {
         portfolioId,
         prompt: newMsg.content,
-        history: messages.slice(1) // skip the initial greeting
+        history: messages.slice(1),
       });
 
       setMessages(prev => [...prev, { role: 'assistant', content: res.data.reply }]);
-      if (res.data.designApplied && onDesignApplied) {
+      const changesApplied = Boolean(res.data.changesApplied ?? res.data.designApplied);
+      if (changesApplied) {
         onDesignApplied();
       }
     } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Oops, something went wrong. Make sure my API key is configured!' }]);
+      const backendMsg = err?.response?.data?.reply || err?.response?.data?.error;
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: backendMsg || 'Oops, something went wrong. Please try again.' },
+      ]);
     } finally {
       setLoading(false);
+      window.setTimeout(() => inputRef.current?.focus(), 20);
     }
   };
 
+  const toggleChat = () => {
+    setIsOpen(prev => !prev);
+    window.setTimeout(() => inputRef.current?.focus(), 100);
+  };
+
   return (
-    <div style={{ position: 'fixed', bottom: 32, right: 32, zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 16,
+        right: 16,
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        pointerEvents: 'none',
+        maxWidth: 'calc(100vw - 32px)',
+      }}
+    >
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -49,54 +92,101 @@ export default function AIChatAgent({ portfolioId, onDesignApplied }: { portfoli
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
+            onMouseDown={() => inputRef.current?.focus()}
             style={{
-              width: 380,
-              height: 500,
-              background: '#111',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 16,
-              boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+              width: 'min(420px, calc(100vw - 32px))',
+              height: 'min(560px, calc(100vh - 112px))',
+              maxHeight: 'calc(100vh - 112px)',
+              background: 'var(--panel)',
+              border: '1px solid var(--border)',
+              borderRadius: 18,
+              boxShadow: '0 18px 60px rgba(15,23,42,0.24)',
               marginBottom: 16,
               display: 'flex',
               flexDirection: 'column',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              pointerEvents: 'auto',
+              position: 'relative',
             }}
           >
-            {/* Header */}
-            <div style={{ padding: '16px 20px', background: '#1a1a1a', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              style={{
+                padding: '20px 24px',
+                background: 'var(--bg-elevated)',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: '#fafafa' }}>Design Agent ✨</h3>
-                <p style={{ fontSize: 12, color: '#a1a1aa', margin: 0, fontFamily: 'monospace' }}>Powered by GPT-4o</p>
+                <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--fg)' }}>Portfolio Copilot</h3>
+                <p style={{ fontSize: 13, color: 'var(--muted-strong)', margin: 0, fontFamily: 'monospace' }}>
+                  Powered by GPT-4o
+                </p>
               </div>
-              <button 
+              <button
+                type="button"
                 onClick={() => setIsOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#71717a', cursor: 'pointer', fontSize: 20 }}
+                aria-label="Close chat"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--muted)',
+                  cursor: 'pointer',
+                  fontSize: 22,
+                  pointerEvents: 'auto',
+                }}
               >
-                ×
+                X
               </button>
             </div>
 
-            {/* Messages */}
-            <div style={{ flex: 1, padding: 20, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {messages.map((m, i) => (
-                <div key={i} style={{ alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
-                  <div style={{
-                    background: m.role === 'user' ? '#fafafa' : 'rgba(255,255,255,0.06)',
-                    color: m.role === 'user' ? '#000' : '#fafafa',
-                    padding: '10px 14px',
-                    borderRadius: 12,
-                    fontSize: 14,
-                    lineHeight: 1.5,
-                    borderBottomRightRadius: m.role === 'user' ? 2 : 12,
-                    borderBottomLeftRadius: m.role === 'assistant' ? 2 : 12
-                  }}>
-                    {m.content}
+            <div
+              style={{
+                flex: 1,
+                padding: 24,
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 18,
+              }}
+            >
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  style={{ alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}
+                >
+                  <div
+                    style={{
+                      background: message.role === 'user' ? 'var(--fg)' : 'var(--card)',
+                      color: message.role === 'user' ? 'var(--bg-elevated)' : 'var(--fg)',
+                      padding: '14px 18px',
+                      borderRadius: 14,
+                      fontSize: 15,
+                      lineHeight: 1.6,
+                      wordBreak: 'break-word',
+                      border: message.role === 'assistant' ? '1px solid var(--border)' : 'none',
+                      borderBottomRightRadius: message.role === 'user' ? 2 : 12,
+                      borderBottomLeftRadius: message.role === 'assistant' ? 2 : 12,
+                    }}
+                  >
+                    {message.content}
                   </div>
                 </div>
               ))}
               {loading && (
                 <div style={{ alignSelf: 'flex-start' }}>
-                  <div style={{ background: 'rgba(255,255,255,0.06)', padding: '10px 14px', borderRadius: 12, display: 'flex', gap: 4 }}>
+                  <div
+                    style={{
+                      background: 'var(--card)',
+                      padding: '14px 18px',
+                      borderRadius: 14,
+                      display: 'flex',
+                      gap: 6,
+                      border: '1px solid var(--border)',
+                    }}
+                  >
                     <div className="dot-pulse"></div>
                   </div>
                 </div>
@@ -104,33 +194,48 @@ export default function AIChatAgent({ portfolioId, onDesignApplied }: { portfoli
               <div ref={msgEndRef} />
             </div>
 
-            {/* Input */}
-            <div style={{ padding: 16, borderTop: '1px solid rgba(255,255,255,0.06)', background: '#111' }}>
-              <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ padding: 18, borderTop: '1px solid var(--border)', background: 'var(--panel)' }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
                 <input
+                  ref={inputRef}
                   type="text"
                   value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                  placeholder="Ask for design changes..."
+                  onChange={event => setInput(event.target.value)}
+                  onKeyDown={event => event.key === 'Enter' && sendMessage()}
+                  autoComplete="off"
+                  placeholder="Ask anything about your portfolio..."
+                  className="chat-input"
                   style={{
                     flex: 1,
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 20,
-                    padding: '10px 16px',
-                    color: '#fafafa',
-                    fontSize: 14,
-                    outline: 'none'
+                    minWidth: 0,
+                    background: 'var(--input-bg)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 22,
+                    padding: '14px 18px',
+                    color: 'var(--fg)',
+                    fontSize: 16,
+                    outline: 'none',
+                    caretColor: 'var(--fg)',
+                    pointerEvents: 'auto',
                   }}
                 />
                 <button
+                  type="button"
                   onClick={sendMessage}
                   disabled={loading || !input.trim()}
                   className="glass-btn small"
-                  style={{ borderRadius: 20, padding: '0 16px', height: 40, border: '1px solid rgba(255,255,255,0.15)' }}
+                  aria-label="Send message"
+                  style={{
+                    borderRadius: 22,
+                    padding: '0 18px',
+                    height: 48,
+                    minWidth: 76,
+                    flexShrink: 0,
+                    border: '1px solid var(--border)',
+                    pointerEvents: 'auto',
+                  }}
                 >
-                  ↑
+                  Send
                 </button>
               </div>
             </div>
@@ -139,32 +244,43 @@ export default function AIChatAgent({ portfolioId, onDesignApplied }: { portfoli
       </AnimatePresence>
 
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        type="button"
+        onClick={toggleChat}
+        aria-label={isOpen ? 'Close portfolio copilot' : 'Open portfolio copilot'}
         style={{
-          width: 56,
-          height: 56,
-          borderRadius: 28,
-          background: '#fafafa',
-          color: '#000',
+          width: 64,
+          height: 64,
+          borderRadius: 32,
+          background: 'var(--fg)',
+          color: 'var(--bg-elevated)',
           border: 'none',
           cursor: 'pointer',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          boxShadow: '0 10px 24px rgba(15,23,42,0.24)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 24,
+          fontSize: 18,
+          fontWeight: 700,
           transition: 'transform 0.2s',
-          transform: isOpen ? 'scale(0.9)' : 'scale(1)'
+          transform: isOpen ? 'scale(0.9)' : 'scale(1)',
+          pointerEvents: 'auto',
         }}
       >
-        {isOpen ? '✕' : '✨'}
+        {isOpen ? 'X' : 'AI'}
       </button>
 
       <style>{`
+        .chat-input::placeholder {
+          color: var(--muted);
+        }
+        .chat-input:focus {
+          border-color: var(--muted-strong) !important;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+        }
         .dot-pulse {
           width: 6px;
           height: 6px;
-          background: #a1a1aa;
+          background: var(--muted-strong);
           border-radius: 50%;
           animation: pulse 1.5s infinite;
         }

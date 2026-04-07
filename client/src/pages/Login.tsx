@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import DotWave from '../components/DotWave'
+
+const mutedText = 'var(--muted)'
+const dangerText = 'var(--danger)'
+const dangerSoft = 'var(--danger-soft)'
+const dangerBorder = '1px solid var(--danger-border)'
+const linkColor = 'var(--link)'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -32,27 +37,27 @@ export default function Login() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <DotWave />
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, position: 'relative', isolation: 'isolate' }}>
+      <div className="static-page-backdrop" />
 
-      <div className="glass" style={{ maxWidth: 420, width: '100%', padding: 40 }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: 18, marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+      <div className="glass" style={{ maxWidth: 500, width: '100%', padding: 48 }}>
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div style={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: 20, marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <span className="pulse-dot">●</span> Portify
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 700 }}>Welcome back</h1>
-          <p style={{ fontSize: 13, color: '#71717a', marginTop: 4 }}>Sign in to your account</p>
+          <h1 style={{ fontSize: 32, fontWeight: 700 }}>Welcome back</h1>
+          <p style={{ fontSize: 15, color: mutedText, marginTop: 6, lineHeight: 1.6 }}>Sign in to your account</p>
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, padding: '10px 16px', marginBottom: 16, fontSize: 13, color: '#fca5a5' }}>
+          <div style={{ background: dangerSoft, border: dangerBorder, borderRadius: 10, padding: '14px 18px', marginBottom: 18, fontSize: 14, color: dangerText }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div>
-            <label style={{ fontSize: 12, fontFamily: 'monospace', color: '#71717a', display: 'block', marginBottom: 6 }}>Email</label>
+            <label style={{ fontSize: 13, fontFamily: 'monospace', color: mutedText, display: 'block', marginBottom: 8 }}>Email</label>
             <input
               className="glass-input"
               type="email"
@@ -63,24 +68,24 @@ export default function Login() {
           </div>
 
           <div>
-            <label style={{ fontSize: 12, fontFamily: 'monospace', color: '#71717a', display: 'block', marginBottom: 6 }}>Password</label>
+            <label style={{ fontSize: 13, fontFamily: 'monospace', color: mutedText, display: 'block', marginBottom: 8 }}>Password</label>
             <input
               className="glass-input"
               type="password"
-              placeholder="••••••••"
+              placeholder="********"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
           </div>
 
-          <button className="glass-btn" type="submit" disabled={loading} style={{ width: '100%', justifyContent: 'center', marginTop: 8 }}>
+          <button className="glass-btn" type="submit" disabled={loading} style={{ width: '100%', justifyContent: 'center', marginTop: 10 }}>
             {loading ? <div className="spinner" /> : 'Sign In'}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: '#71717a' }}>
+        <p style={{ textAlign: 'center', marginTop: 28, fontSize: 15, color: mutedText }}>
           Don't have an account?{' '}
-          <Link to="/register" style={{ color: '#fafafa', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>
+          <Link to="/register" style={{ color: linkColor, borderBottom: '1px solid var(--border)' }}>
             Sign up
           </Link>
         </p>

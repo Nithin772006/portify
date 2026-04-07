@@ -10,10 +10,10 @@ export default function Navbar() {
       left: 0,
       right: 0,
       zIndex: 100,
-      background: 'rgba(10,10,10,0.7)',
+      background: 'var(--overlay)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      borderBottom: '1px solid rgba(255,255,255,0.08)',
+      borderBottom: '1px solid var(--border)',
       height: 60,
       padding: '0 40px',
       display: 'flex',
@@ -32,7 +32,7 @@ export default function Navbar() {
           gap: 6,
         }}
       >
-        <span className="pulse-dot" style={{ color: '#fafafa' }}>●</span>
+        <span className="pulse-dot" style={{ color: 'var(--fg)' }}>●</span>
         Portify
       </div>
 

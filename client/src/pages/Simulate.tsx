@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { API } from '../hooks/useAuth'
+import { API, buildPortfolioUrl } from '../hooks/useAuth'
 
 const attentionZones = [
   { section: 'name-title', label: 'Name & Title', weight: 1.0, timeRange: [0, 1.5], color: 'rgba(255,255,255,0.4)' },
@@ -10,6 +10,17 @@ const attentionZones = [
   { section: 'experience', label: 'Experience', weight: 0.5, timeRange: [4.5, 5.5], color: 'rgba(255,255,255,0.12)' },
   { section: 'education', label: 'Education', weight: 0.2, timeRange: [5.5, 6.0], color: 'rgba(255,255,255,0.05)' },
 ]
+
+const themeText = {
+  primary: 'var(--fg)',
+  muted: 'var(--muted)',
+  mutedStrong: 'var(--muted-strong)',
+  border: 'var(--border)',
+  overlay: 'var(--overlay-strong)',
+  panel: 'var(--surface-soft)',
+  success: 'var(--success)',
+  danger: 'var(--danger)',
+} as const
 
 export default function Simulate() {
   const navigate = useNavigate()
@@ -21,6 +32,7 @@ export default function Simulate() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval>>(undefined)
+  const previewUrl = buildPortfolioUrl(portfolio?.portfolioId, portfolio?.updatedAt)
 
   useEffect(() => {
     API.get('/portfolio/user/me').then(r => setPortfolio(r.data)).catch(() => navigate('/dashboard'))
@@ -82,10 +94,10 @@ export default function Simulate() {
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* Left: iframe with heatmap overlay */}
-      <div style={{ flex: 1, position: 'relative', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ flex: 1, position: 'relative', borderRight: '1px solid var(--border)' }}>
         <iframe
           ref={iframeRef}
-          src={portfolio ? `http://localhost:3001/p/${portfolio.portfolioId}.html` : ''}
+          src={previewUrl}
           style={{ width: '100%', height: '100%', border: 'none' }}
           title="Portfolio"
         />
@@ -98,7 +110,7 @@ export default function Simulate() {
             position: 'absolute',
             top: 24,
             right: 24,
-            background: 'rgba(10,10,10,0.9)',
+            background: themeText.overlay,
             backdropFilter: 'blur(12px)',
             borderRadius: 12,
             padding: '16px 24px',
@@ -112,13 +124,13 @@ export default function Simulate() {
       </div>
 
       {/* Right: controls + results */}
-      <div style={{ width: 420, padding: 32, overflowY: 'auto', background: 'rgba(255,255,255,0.02)' }}>
-        <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#71717a', fontFamily: 'monospace', fontSize: 12, cursor: 'pointer', marginBottom: 24 }}>
-          ← Back to Dashboard
+      <div style={{ width: 420, padding: 32, overflowY: 'auto', background: themeText.panel }}>
+        <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: themeText.muted, fontFamily: 'monospace', fontSize: 12, cursor: 'pointer', marginBottom: 24 }}>
+          Back to Dashboard
         </button>
 
         <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 8 }}>Recruiter Simulation</h2>
-        <p style={{ fontSize: 13, color: '#71717a', marginBottom: 24, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 13, color: themeText.muted, marginBottom: 24, lineHeight: 1.6 }}>
           See what a recruiter focuses on when they spend 6 seconds on your portfolio.
         </p>
 
@@ -131,7 +143,7 @@ export default function Simulate() {
         {running && (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <div className="spinner" style={{ margin: '0 auto 16px' }} />
-            <p style={{ fontFamily: 'monospace', fontSize: 13, color: '#71717a' }}>Scanning portfolio...</p>
+            <p style={{ fontFamily: 'monospace', fontSize: 13, color: themeText.muted }}>Scanning portfolio...</p>
           </div>
         )}
 
@@ -139,37 +151,37 @@ export default function Simulate() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
               <div style={{ fontSize: 64, fontWeight: 900 }}>{engagementScore}</div>
-              <div style={{ fontSize: 13, fontFamily: 'monospace', color: '#71717a' }}>Recruiter Engagement Score</div>
+              <div style={{ fontSize: 13, fontFamily: 'monospace', color: themeText.muted }}>Recruiter Engagement Score</div>
             </div>
 
             <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#4ade80', marginBottom: 12 }}>✓ Strong Zones</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: themeText.success, marginBottom: 12 }}>Strong Zones</h3>
               {strongZones.map(z => (
                 <div key={z.section} className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13 }}>
-                  {z.label} — <span style={{ color: '#71717a' }}>{Math.round(z.weight * 100)}% attention</span>
+                  {z.label} - <span style={{ color: themeText.muted }}>{Math.round(z.weight * 100)}% attention</span>
                 </div>
               ))}
             </div>
 
             <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#fca5a5', marginBottom: 12 }}>✗ Dead Zones</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: themeText.danger, marginBottom: 12 }}>Dead Zones</h3>
               {deadZones.map(z => (
                 <div key={z.section} className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13 }}>
-                  {z.label} — <span style={{ color: '#71717a' }}>Move up for visibility</span>
+                  {z.label} - <span style={{ color: themeText.muted }}>Move up for visibility</span>
                 </div>
               ))}
             </div>
 
             <div style={{ marginBottom: 24 }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>What to fix</h3>
-              <div className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13, color: '#a1a1aa' }}>
-                Move your strongest project to the top — recruiters rarely scroll past the fold.
+              <div className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13, color: themeText.mutedStrong }}>
+                Move your strongest project to the top - recruiters rarely scroll past the fold.
               </div>
-              <div className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13, color: '#a1a1aa' }}>
+              <div className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13, color: themeText.mutedStrong }}>
                 Add your key skills near your name/title for immediate visibility.
               </div>
-              <div className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13, color: '#a1a1aa' }}>
-                Education gets minimal attention — keep it brief and at the bottom.
+              <div className="glass" style={{ padding: '12px 16px', marginBottom: 8, fontSize: 13, color: themeText.mutedStrong }}>
+                Education gets minimal attention - keep it brief and at the bottom.
               </div>
             </div>
 
