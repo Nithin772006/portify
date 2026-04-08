@@ -509,134 +509,212 @@
       gap: 28px;
     }
 
-    /* project-card-3d-fix */
     .project-card {
-      position: relative;
-      height: 420px;
-      perspective: 1000px;
-      -webkit-perspective: 1000px;
-      transform-style: preserve-3d;
-      -webkit-transform-style: preserve-3d;
-      cursor: pointer;
-      transition: transform 0.18s ease;
+      perspective: 1200px !important;
+      border-radius: 16px !important;
+      cursor: pointer !important;
+      height: 340px !important;
+      position: relative !important;
       overflow: visible;
+      transition: transform 0.18s ease;
     }
 
     .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
+      position: relative !important;
+      width: 100% !important;
+      height: 100% !important;
       transform: rotateY(0deg);
-      transform-style: preserve-3d;
-      -webkit-transform-style: preserve-3d;
-      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d !important;
+      -webkit-transform-style: preserve-3d !important;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      border-radius: 16px !important;
     }
 
     .project-card.flipped .card-inner {
-      transform: rotateY(180deg);
+      transform: rotateY(180deg) !important;
+    }
+
+    .card-face,
+    .card-front,
+    .card-back {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 16px !important;
+      backface-visibility: hidden !important;
+      -webkit-backface-visibility: hidden !important;
+      overflow: hidden !important;
     }
 
     .card-face {
-      position: absolute;
-      inset: 0;
-      border-radius: 26px;
-      overflow: hidden;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
       isolation: isolate;
     }
 
     .card-front {
-      position: relative;
+      background: rgba(255, 255, 255, 0.06) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      box-shadow:
+        0 4px 30px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 2 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-end !important;
+      padding: 1.5rem !important;
+      overflow: hidden !important;
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
       transform: rotateY(0deg);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      z-index: 2;
-      background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.82) 100%),
-        radial-gradient(circle at top right, rgba(255, 255, 255, 0.12), transparent 36%),
-        #070707;
     }
 
-    .card-front img,
-    .project-fallback {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+    .card-front::before {
+      content: '' !important;
+      position: absolute !important;
+      inset: 0 !important;
+      border-radius: 16px !important;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.85) 0%,
+        rgba(0, 0, 0, 0.4) 40%,
+        rgba(0, 0, 0, 0.1) 70%,
+        rgba(0, 0, 0, 0) 100%
+      ) !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
     }
 
-    .card-front img {
-      object-fit: cover;
-      filter: grayscale(1) contrast(1.08);
+    .card-front.has-thumbnail {
+      background-image: var(--thumb-url) !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
     }
 
-    .project-fallback {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 34px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.14), transparent 30%),
-        radial-gradient(circle at 84% 0%, rgba(255, 255, 255, 0.08), transparent 22%),
-        linear-gradient(140deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01));
+    .card-front.no-thumbnail {
+      background: linear-gradient(
+        135deg,
+        rgba(99, 102, 241, 0.15) 0%,
+        rgba(139, 92, 246, 0.1) 50%,
+        rgba(236, 72, 153, 0.08) 100%
+      ) !important;
+      background-image:
+        linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.12) 0%,
+          rgba(139, 92, 246, 0.08) 100%
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.015) 40px,
+          rgba(255, 255, 255, 0.015) 41px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.015) 40px,
+          rgba(255, 255, 255, 0.015) 41px
+        ) !important;
+    }
+
+    .project-card:not(.flipped):hover .card-front {
+      border-color: rgba(255, 255, 255, 0.22) !important;
+      box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
     }
 
     #projects .project-display-title {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 1rem 1.2rem;
-      font-size: clamp(1.8rem, 5vw, 3.5rem);
-      font-weight: 900;
-      color: rgba(255, 255, 255, 0.06) !important;
-      -webkit-text-fill-color: rgba(255, 255, 255, 0.06) !important;
-      letter-spacing: -0.02em;
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 100%;
+      padding: 0 1rem;
+      font-size: clamp(2.5rem, 7vw, 5rem) !important;
+      font-weight: 900 !important;
+      letter-spacing: -0.03em !important;
+      white-space: nowrap !important;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.035) !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.035) !important;
       line-height: 1;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
+      pointer-events: none !important;
+      user-select: none !important;
+      z-index: 1 !important;
+      overflow: hidden !important;
+      max-width: 100% !important;
       text-transform: uppercase;
     }
 
-    .project-fallback span {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.16em;
-      color: var(--muted-soft);
+    #projects .card-front .flip-hint {
+      position: absolute !important;
+      top: 1rem !important;
+      right: 1rem !important;
+      font-family: 'Courier New', monospace !important;
+      font-size: 0.6rem !important;
+      letter-spacing: 0.12em !important;
+      color: rgba(255, 255, 255, 0.35) !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.35) !important;
+      opacity: 0 !important;
+      transform: translateY(-4px) !important;
+      transition: opacity 0.3s ease, transform 0.3s ease !important;
+      z-index: 4 !important;
+      pointer-events: none !important;
       text-transform: uppercase;
-      margin-bottom: 14px;
     }
 
-    .project-fallback strong {
-      font-size: 2.2rem;
-      line-height: 0.9;
-      text-transform: uppercase;
-      max-width: 240px;
+    #projects .project-card:not(.flipped):hover .flip-hint {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
     }
 
-    .card-front-overlay {
-      position: absolute;
-      inset: auto 0 0;
-      padding: 28px;
-      z-index: 2;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.86) 100%);
+    #projects .card-front .flip-hint::after {
+      content: 'CLICK TO FLIP \2197' !important;
     }
 
-    .card-front-overlay h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
+    .card-front .card-front-content {
+      position: relative !important;
+      z-index: 3 !important;
+    }
+
+    #projects .card-front .project-label {
+      font-family: 'Courier New', monospace !important;
+      font-size: 0.65rem !important;
+      letter-spacing: 0.18em !important;
+      color: rgba(255, 255, 255, 0.5) !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
+      text-transform: uppercase !important;
+      margin-bottom: 0.4rem !important;
+      display: block !important;
+    }
+
+    #projects .card-front .project-divider {
+      width: 24px !important;
+      height: 1px !important;
+      background: rgba(255, 255, 255, 0.3) !important;
+      margin: 0.4rem 0 !important;
+      display: block !important;
+    }
+
+    #projects .card-front .project-front-title {
+      margin: 0 !important;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem) !important;
+      font-weight: 700 !important;
       color: #ffffff !important;
-      line-height: 1;
-      text-transform: uppercase;
-      letter-spacing: -0.04em;
-      position: relative;
-      z-index: 3;
+      -webkit-text-fill-color: #ffffff !important;
+      line-height: 1.2 !important;
+      text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(0, 0, 0, 0.5) !important;
     }
 
     .card-back {
@@ -943,11 +1021,7 @@
       }
 
       .project-card {
-        height: 380px;
-      }
-
-      .card-front-overlay h3 {
-        font-size: 1.1rem;
+        height: 340px !important;
       }
 
       .contact {
@@ -1027,11 +1101,21 @@
     }
 
     #projects .project-display-title {
-      color: rgba(255, 255, 255, 0.06) !important;
-      -webkit-text-fill-color: rgba(255, 255, 255, 0.06) !important;
+      color: rgba(255, 255, 255, 0.035) !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.035) !important;
     }
 
-    .card-front-overlay h3,
+    #projects .card-front .project-label {
+      color: rgba(255, 255, 255, 0.5) !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    #projects .card-front .flip-hint {
+      color: rgba(255, 255, 255, 0.35) !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.35) !important;
+    }
+
+    #projects .card-front .project-front-title,
     .card-back,
     .card-back * {
       color: #ffffff !important;
@@ -1109,19 +1193,15 @@
         <p class="section-intro">Projects arrive as tactile objects: tilt them, flip them, and inspect the stack.</p>
         <div class="projects-grid">
           {{#each projects}}
-          <article class="project-card">
+          <div class="project-card" onclick="this.classList.toggle('flipped')">
             <div class="card-inner">
-              <div class="card-face card-front">
-                {{#if hasPreviewImage}}
-                <img src="{{previewImage}}" alt="{{title}}" loading="lazy" decoding="async" />
-                {{else}}
-                <div class="project-fallback" aria-hidden="true">
-                  <span>Project</span>
-                </div>
-                {{/if}}
+              <div class="card-face card-front {{#if hasPreviewImage}}has-thumbnail{{else}}no-thumbnail{{/if}}"{{#if hasPreviewImage}} style="--thumb-url: url('{{previewImage}}')"{{/if}}>
                 <div class="project-display-title" aria-hidden="true">{{title}}</div>
-                <div class="card-front-overlay">
-                  <h3>{{title}}</h3>
+                <div class="flip-hint" aria-hidden="true"></div>
+                <div class="card-front-content">
+                  <span class="project-label">Project</span>
+                  <span class="project-divider"></span>
+                  <h3 class="project-front-title">{{title}}</h3>
                 </div>
               </div>
               <div class="card-face card-back">
@@ -1137,11 +1217,11 @@
                   {{/if}}
                 </div>
                 {{#if hasProjectUrl}}
-                <a class="project-link" href="{{projectUrl}}" target="_blank" rel="noreferrer">Visit Project -&gt;</a>
+                <a class="project-link" href="{{projectUrl}}" target="_blank" rel="noreferrer" onclick="event.stopPropagation()">Visit Project -&gt;</a>
                 {{/if}}
               </div>
             </div>
-          </article>
+          </div>
           {{/each}}
         </div>
       </div>
@@ -1547,12 +1627,6 @@
       function initProjectCards() {
         document.querySelectorAll('.project-card').forEach((card) => {
           initTilt(card);
-          card.addEventListener('click', (event) => {
-            if (event.target.closest('a')) {
-              return;
-            }
-            card.classList.toggle('flipped');
-          });
         });
 
         document.querySelectorAll('.tilt-card').forEach((card) => {

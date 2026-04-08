@@ -24,6 +24,8 @@ interface Education {
   graduationYear: string
 }
 
+type CustomFields = Record<string, string>
+
 interface FormState {
   currentStep: number
   profession: string
@@ -39,10 +41,12 @@ interface FormState {
   projects: Project[]
   experience: Experience[]
   education: Education
+  customFields: CustomFields
   jobDescription: string
   setStep: (step: number) => void
   setProfession: (p: string) => void
   setField: (key: string, value: any) => void
+  setCustomField: (key: string, value: string) => void
   addSkill: (skill: string) => void
   removeSkill: (skill: string) => void
   setProject: (index: number, data: Partial<Project>) => void
@@ -75,11 +79,15 @@ export const useFormStore = create<FormState>((set, get) => ({
   projects: [{ ...emptyProject }],
   experience: [{ ...emptyExperience }],
   education: { ...emptyEducation },
+  customFields: {},
   jobDescription: '',
 
   setStep: (step) => set({ currentStep: step }),
   setProfession: (p) => set({ profession: p }),
   setField: (key, value) => set({ [key]: value } as any),
+  setCustomField: (key, value) => set((s) => ({
+    customFields: { ...s.customFields, [key]: value }
+  })),
 
   addSkill: (skill) => set((s) => {
     if (s.skills.includes(skill)) return s
@@ -133,6 +141,7 @@ export const useFormStore = create<FormState>((set, get) => ({
       projects: s.projects.filter(p => p.title),
       experience: s.experience.filter(e => e.company || e.role),
       education: s.education,
+      ...s.customFields,
       jobDescription: s.jobDescription,
     }
   },
@@ -152,6 +161,7 @@ export const useFormStore = create<FormState>((set, get) => ({
     projects: [{ ...emptyProject }],
     experience: [{ ...emptyExperience }],
     education: { ...emptyEducation },
+    customFields: {},
     jobDescription: '',
   }),
 }))
