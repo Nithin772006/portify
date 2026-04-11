@@ -88,7 +88,7 @@ export default function Landing() {
   }
 
   return (
-    <div style={{ position: 'relative', isolation: 'isolate' }}>
+    <div className="landing-page" style={{ position: 'relative', isolation: 'isolate' }}>
       <div className="static-page-backdrop" />
       <Navbar />
 

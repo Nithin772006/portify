@@ -4,7 +4,7 @@ export default function Navbar() {
   const navigate = useNavigate()
 
   return (
-    <nav style={{
+    <nav className="landing-nav-shell" style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -23,6 +23,7 @@ export default function Navbar() {
       flexWrap: 'wrap',
     }}>
       <div
+        className="landing-nav-brand"
         onClick={() => navigate('/')}
         style={{
           fontFamily: 'monospace',

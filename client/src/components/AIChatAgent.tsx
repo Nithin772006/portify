@@ -88,6 +88,7 @@ export default function AIChatAgent({
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            className="copilot-panel"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -244,6 +245,7 @@ export default function AIChatAgent({
       </AnimatePresence>
 
       <button
+        className="copilot-fab"
         type="button"
         onClick={toggleChat}
         aria-label={isOpen ? 'Close portfolio copilot' : 'Open portfolio copilot'}

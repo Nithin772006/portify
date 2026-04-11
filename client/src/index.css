@@ -2509,3 +2509,418 @@ html[data-theme="light"] [style*="border-bottom: 1px solid rgba(255,255,255,0.06
 html[data-theme="light"] [style*="border-bottom: 1px solid rgba(255,255,255,0.2)"] {
   border-color: var(--border) !important;
 }
+
+:root {
+  --pointer-x-screen: 50%;
+  --pointer-y-screen: 50%;
+  --pointer-shift-x: 0px;
+  --pointer-shift-y: 0px;
+}
+
+@keyframes experience-aurora {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+
+  100% {
+    transform: translate3d(2%, 1%, 0) scale(1.08);
+  }
+}
+
+@keyframes experience-grid-drift {
+  0% {
+    transform: perspective(1400px) rotateX(76deg) translate3d(-3%, 6%, 0);
+  }
+
+  100% {
+    transform: perspective(1400px) rotateX(76deg) translate3d(3%, 2%, 0);
+  }
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+  overflow: clip;
+}
+
+.app-route-layer {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.site-3d-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 18%, var(--scene-wash), transparent 24%),
+    radial-gradient(circle at 80% 16%, rgba(255, 255, 255, 0.07), transparent 18%),
+    linear-gradient(180deg, rgba(3, 5, 12, 0.7) 0%, rgba(3, 6, 14, 0.92) 100%);
+}
+
+html[data-theme="light"] .site-3d-stage {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(99, 102, 241, 0.14), transparent 24%),
+    radial-gradient(circle at 82% 12%, rgba(236, 72, 153, 0.1), transparent 18%),
+    linear-gradient(180deg, rgba(248, 251, 255, 0.92) 0%, rgba(244, 241, 255, 0.98) 100%);
+}
+
+.site-3d-stage__canvas {
+  position: absolute !important;
+  inset: 0;
+}
+
+.site-3d-stage__wash,
+.site-3d-stage__grid,
+.site-3d-stage__grain {
+  position: absolute;
+  inset: -8%;
+}
+
+.site-3d-stage__wash {
+  background:
+    radial-gradient(circle at var(--pointer-x-screen) var(--pointer-y-screen), var(--scene-wash-strong), transparent 22%),
+    radial-gradient(circle at 15% 75%, rgba(255, 255, 255, 0.05), transparent 24%),
+    radial-gradient(circle at 84% 26%, var(--scene-wash), transparent 20%);
+  filter: blur(20px);
+  opacity: 0.95;
+  animation: experience-aurora 16s ease-in-out infinite alternate;
+  transform: translate3d(var(--pointer-shift-x), var(--pointer-shift-y), 0);
+}
+
+.site-3d-stage__grid {
+  inset: auto -10% -38% -10%;
+  height: 65vh;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.95) 24%, rgba(0, 0, 0, 0.95) 100%);
+  opacity: 0.22;
+  animation: experience-grid-drift 18s ease-in-out infinite alternate;
+}
+
+html[data-theme="light"] .site-3d-stage__grid {
+  opacity: 0.16;
+}
+
+.site-3d-stage__grain {
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 0.7px, transparent 0.7px);
+  background-size: 8px 8px;
+  mix-blend-mode: soft-light;
+  opacity: 0.06;
+}
+
+.app-shell[data-scene] .landing-page,
+.app-shell[data-scene] .auth-page,
+.app-shell[data-scene] .onboarding-page {
+  background: transparent;
+}
+
+.app-shell[data-scene] .static-page-backdrop {
+  background:
+    radial-gradient(circle at var(--pointer-x-screen) var(--pointer-y-screen), var(--scene-wash-strong), transparent 22%),
+    radial-gradient(circle at 18% 14%, var(--scene-wash), transparent 28%),
+    radial-gradient(circle at 82% 8%, rgba(255, 255, 255, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(4, 8, 20, 0.56) 0%, rgba(4, 6, 14, 0.86) 100%);
+  backdrop-filter: blur(20px) saturate(145%);
+  opacity: 0.96;
+  animation: experience-aurora 14s ease-in-out infinite alternate;
+}
+
+html[data-theme="light"] .app-shell[data-scene] .static-page-backdrop {
+  background:
+    radial-gradient(circle at var(--pointer-x-screen) var(--pointer-y-screen), rgba(129, 140, 248, 0.16), transparent 22%),
+    radial-gradient(circle at 18% 12%, rgba(99, 102, 241, 0.14), transparent 28%),
+    radial-gradient(circle at 82% 8%, rgba(236, 72, 153, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(248, 251, 255, 0.78) 0%, rgba(244, 241, 255, 0.92) 100%);
+}
+
+.app-shell[data-scene] .glass,
+.app-shell[data-scene] .landing-nav-shell,
+.app-shell[data-scene] .dashboard-sidebar,
+.app-shell[data-scene] .dashboard-main,
+.app-shell[data-scene] .simulate-preview-panel,
+.app-shell[data-scene] .simulate-side-panel,
+.app-shell[data-scene] .auth-card,
+.app-shell[data-scene] .copilot-panel,
+.app-shell[data-scene] .onboarding-progress-shell,
+.app-shell[data-scene] .onboarding-stage {
+  position: relative;
+  isolation: isolate;
+  border-color: var(--scene-outline);
+  box-shadow:
+    0 24px 80px rgba(2, 6, 23, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(24px) saturate(145%);
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease,
+    transform 0.3s ease;
+}
+
+.app-shell[data-scene] .glass::before,
+.app-shell[data-scene] .landing-nav-shell::before,
+.app-shell[data-scene] .dashboard-sidebar::before,
+.app-shell[data-scene] .dashboard-main::before,
+.app-shell[data-scene] .simulate-preview-panel::before,
+.app-shell[data-scene] .simulate-side-panel::before,
+.app-shell[data-scene] .auth-card::before,
+.app-shell[data-scene] .copilot-panel::before,
+.app-shell[data-scene] .onboarding-progress-shell::before,
+.app-shell[data-scene] .onboarding-stage::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04) 42%, transparent 74%),
+    radial-gradient(circle at var(--pointer-x-screen) var(--pointer-y-screen), var(--scene-wash), transparent 62%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.app-shell[data-scene] .glass::after,
+.app-shell[data-scene] .landing-nav-shell::after,
+.app-shell[data-scene] .dashboard-sidebar::after,
+.app-shell[data-scene] .dashboard-main::after,
+.app-shell[data-scene] .simulate-preview-panel::after,
+.app-shell[data-scene] .simulate-side-panel::after,
+.app-shell[data-scene] .auth-card::after,
+.app-shell[data-scene] .copilot-panel::after,
+.app-shell[data-scene] .onboarding-progress-shell::after,
+.app-shell[data-scene] .onboarding-stage::after {
+  content: "";
+  position: absolute;
+  inset: auto -8% -26% 14%;
+  height: 44%;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--scene-wash), transparent 70%);
+  opacity: 0.38;
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+html[data-theme="dark"] .app-shell[data-scene] .glass,
+html[data-theme="dark"] .app-shell[data-scene] .landing-nav-shell,
+html[data-theme="dark"] .app-shell[data-scene] .dashboard-sidebar,
+html[data-theme="dark"] .app-shell[data-scene] .dashboard-main,
+html[data-theme="dark"] .app-shell[data-scene] .simulate-preview-panel,
+html[data-theme="dark"] .app-shell[data-scene] .simulate-side-panel,
+html[data-theme="dark"] .app-shell[data-scene] .auth-card,
+html[data-theme="dark"] .app-shell[data-scene] .copilot-panel,
+html[data-theme="dark"] .app-shell[data-scene] .onboarding-progress-shell,
+html[data-theme="dark"] .app-shell[data-scene] .onboarding-stage {
+  background: linear-gradient(180deg, rgba(14, 18, 32, 0.76), rgba(7, 11, 24, 0.46)) !important;
+}
+
+html[data-theme="light"] .app-shell[data-scene] .glass,
+html[data-theme="light"] .app-shell[data-scene] .landing-nav-shell,
+html[data-theme="light"] .app-shell[data-scene] .dashboard-sidebar,
+html[data-theme="light"] .app-shell[data-scene] .dashboard-main,
+html[data-theme="light"] .app-shell[data-scene] .simulate-preview-panel,
+html[data-theme="light"] .app-shell[data-scene] .simulate-side-panel,
+html[data-theme="light"] .app-shell[data-scene] .auth-card,
+html[data-theme="light"] .app-shell[data-scene] .copilot-panel,
+html[data-theme="light"] .app-shell[data-scene] .onboarding-progress-shell,
+html[data-theme="light"] .app-shell[data-scene] .onboarding-stage {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(244, 247, 255, 0.64)) !important;
+  box-shadow:
+    0 22px 60px rgba(99, 102, 241, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+@media (hover: hover) {
+  .app-shell[data-scene] .glass:hover,
+  .app-shell[data-scene] .landing-nav-shell:hover,
+  .app-shell[data-scene] .dashboard-sidebar:hover,
+  .app-shell[data-scene] .simulate-preview-panel:hover,
+  .app-shell[data-scene] .simulate-side-panel:hover,
+  .app-shell[data-scene] .auth-card:hover,
+  .app-shell[data-scene] .copilot-panel:hover,
+  .app-shell[data-scene] .onboarding-progress-shell:hover,
+  .app-shell[data-scene] .onboarding-stage:hover {
+    border-color: rgba(255, 255, 255, 0.24);
+    box-shadow:
+      0 32px 96px rgba(2, 6, 23, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+}
+
+.app-shell[data-scene] .glass-btn,
+.app-shell[data-scene] .glass-input,
+.app-shell[data-scene] .sidebar-theme-toggle,
+.app-shell[data-scene] .sidebar-simulate-button {
+  position: relative;
+  z-index: 1;
+  border-color: var(--scene-outline);
+  box-shadow:
+    0 16px 34px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.app-shell[data-scene] .glass-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+}
+
+.app-shell[data-scene] .glass-input {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+}
+
+html[data-theme="light"] .app-shell[data-scene] .glass-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(238, 242, 255, 0.84));
+}
+
+html[data-theme="light"] .app-shell[data-scene] .glass-input {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(243, 244, 255, 0.86));
+}
+
+.app-shell[data-scene] .landing-nav-shell {
+  top: 18px !important;
+  left: 20px !important;
+  right: 20px !important;
+  border: 1px solid var(--scene-outline) !important;
+  border-bottom: 1px solid var(--scene-outline) !important;
+  border-radius: 999px;
+  background: var(--scene-panel) !important;
+}
+
+.app-shell[data-scene] .landing-nav-brand {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+html[data-theme="dark"] .app-shell[data-scene] .landing-nav-brand {
+  background: linear-gradient(135deg, var(--scene-accent), var(--scene-secondary), #ffffff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.app-shell[data-scene] .auth-card {
+  border-radius: 30px !important;
+}
+
+.app-shell[data-scene] .onboarding-progress-shell {
+  top: 18px !important;
+  left: 24px !important;
+  right: 24px !important;
+  border: 1px solid var(--scene-outline) !important;
+  border-bottom: 1px solid var(--scene-outline) !important;
+  border-radius: 999px;
+  background: var(--scene-panel) !important;
+}
+
+.app-shell[data-scene] .onboarding-stage {
+  max-width: 860px !important;
+  margin-top: 38px !important;
+  padding: 118px 28px 56px !important;
+  border: 1px solid var(--scene-outline);
+  border-radius: 32px;
+}
+
+.app-shell[data-scene] .dashboard-shell--immersive {
+  gap: 18px;
+  padding: 18px;
+  align-items: stretch;
+  background: transparent !important;
+}
+
+.app-shell[data-scene] .dashboard-shell--immersive .dashboard-sidebar {
+  min-height: calc(100vh - 36px);
+  border-radius: 30px;
+  border: 1px solid var(--scene-outline);
+}
+
+.app-shell[data-scene] .dashboard-shell--immersive .dashboard-main {
+  min-height: calc(100vh - 36px);
+  border: 1px solid var(--scene-outline);
+  border-radius: 32px;
+}
+
+.app-shell[data-scene] .simulate-layout--immersive {
+  gap: 18px;
+  padding: 18px;
+  background: transparent !important;
+}
+
+.app-shell[data-scene] .simulate-preview-panel,
+.app-shell[data-scene] .simulate-side-panel {
+  border: 1px solid var(--scene-outline);
+  border-radius: 30px;
+}
+
+.app-shell[data-scene] .simulate-preview-panel {
+  overflow: hidden;
+}
+
+.app-shell[data-scene] .simulate-side-panel {
+  background: var(--scene-panel) !important;
+}
+
+.app-shell[data-scene] .copilot-panel {
+  border: 1px solid var(--scene-outline) !important;
+  background: var(--scene-panel) !important;
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.app-shell[data-scene] .copilot-fab {
+  border: 1px solid var(--scene-outline) !important;
+  background: linear-gradient(135deg, var(--scene-accent), var(--scene-secondary)) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 18px 36px rgba(2, 6, 23, 0.26),
+    0 0 34px var(--scene-wash) !important;
+}
+
+html[data-theme="light"] .app-shell[data-scene] .copilot-fab {
+  box-shadow:
+    0 18px 36px rgba(99, 102, 241, 0.22),
+    0 0 28px rgba(129, 140, 248, 0.2) !important;
+}
+
+@media (max-width: 900px) {
+  .app-shell[data-scene] .landing-nav-shell {
+    top: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    border-radius: 28px;
+  }
+
+  .app-shell[data-scene] .onboarding-progress-shell {
+    top: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    border-radius: 24px;
+  }
+
+  .app-shell[data-scene] .onboarding-stage {
+    margin-top: 22px !important;
+    padding: 108px 18px 40px !important;
+    border-radius: 24px;
+  }
+
+  .app-shell[data-scene] .dashboard-shell--immersive {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .app-shell[data-scene] .dashboard-shell--immersive .dashboard-sidebar,
+  .app-shell[data-scene] .dashboard-shell--immersive .dashboard-main,
+  .app-shell[data-scene] .simulate-preview-panel,
+  .app-shell[data-scene] .simulate-side-panel,
+  .app-shell[data-scene] .auth-card {
+    border-radius: 24px;
+  }
+
+  .app-shell[data-scene] .simulate-layout--immersive {
+    padding: 12px;
+    gap: 12px;
+  }
+}

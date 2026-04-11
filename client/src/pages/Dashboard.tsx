@@ -120,7 +120,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="dashboard-shell">
+    <div className="dashboard-shell dashboard-shell--immersive">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="dashboard-main">
         {activeTab === 'overview' && <OverviewTab portfolio={portfolio} analytics={analytics} />}

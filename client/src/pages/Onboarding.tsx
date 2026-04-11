@@ -648,10 +648,10 @@ export default function Onboarding() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: themeText.bg }}>
+    <div className="onboarding-page" style={{ minHeight: '100vh', background: 'transparent', position: 'relative', isolation: 'isolate' }}>
       <DotWave />
 
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, background: themeText.overlay, backdropFilter: 'blur(12px)', padding: '16px 40px', borderBottom: '1px solid var(--border)' }}>
+      <div className="onboarding-progress-shell" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, background: themeText.overlay, backdropFilter: 'blur(12px)', padding: '16px 40px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 800, margin: '0 auto' }}>
           <span style={{ fontFamily: 'monospace', fontSize: 13, color: themeText.muted }}>
             Step {store.currentStep} of {totalSteps}
@@ -662,7 +662,7 @@ export default function Onboarding() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: '80px 24px 40px' }}>
+      <div className="onboarding-stage" style={{ maxWidth: 800, margin: '0 auto', padding: '80px 24px 40px' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={store.currentStep}

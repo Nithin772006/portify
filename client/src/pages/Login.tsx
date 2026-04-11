@@ -37,10 +37,10 @@ export default function Login() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, position: 'relative', isolation: 'isolate' }}>
+    <div className="auth-page" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, position: 'relative', isolation: 'isolate' }}>
       <div className="static-page-backdrop" />
 
-      <div className="glass" style={{ maxWidth: 500, width: '100%', padding: 48 }}>
+      <div className="glass auth-card" style={{ maxWidth: 500, width: '100%', padding: 48 }}>
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <div style={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: 20, marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <span className="pulse-dot">●</span> Portify

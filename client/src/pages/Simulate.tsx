@@ -92,7 +92,7 @@ export default function Simulate() {
   const engagementScore = Math.round(attentionZones.reduce((s, z) => s + z.weight, 0) / attentionZones.length * 100)
 
   return (
-    <div className="simulate-layout">
+    <div className="simulate-layout simulate-layout--immersive">
       <div className="simulate-preview-panel">
         <iframe
           ref={iframeRef}
