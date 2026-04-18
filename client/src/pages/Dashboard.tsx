@@ -154,7 +154,7 @@ function OverviewTab({ portfolio, analytics }: any) {
   }
 
   return (
-    <div className="dashboard-page" data-page="overview">
+    <div className="dashboard-page dashboard-page--overview" data-page="overview">
       <h1 className="dashboard-title">Overview</h1>
 
       <div className="overview-stats-grid">
@@ -181,65 +181,67 @@ function OverviewTab({ portfolio, analytics }: any) {
         ))}
       </div>
 
-      {/* Portfolio URL */}
-      <div className="glass overview-url-card">
-        <div>
-          <div className="overview-url-meta">Your Portfolio URL</div>
-          <div className="overview-url-text">
-            {publicPortfolioUrl}
+      <div className="overview-bottom-grid">
+        {/* Portfolio URL */}
+        <div className="glass overview-url-card">
+          <div>
+            <div className="overview-url-meta">Your Portfolio URL</div>
+            <div className="overview-url-text">
+              {publicPortfolioUrl}
+            </div>
+          </div>
+          <div className="overview-url-actions">
+            <button className="glass-btn small overview-url-button--copy" onClick={copyLink} style={dashboardButtonStyle}>
+              {copied ? 'Copied' : 'Copy Link'}
+            </button>
+            <a href={publicPortfolioUrl} target="_blank" rel="noreferrer" className="glass-btn small overview-url-button--live" style={{ ...dashboardButtonStyle, textDecoration: 'none' }}>
+              View Live
+            </a>
           </div>
         </div>
-        <div className="overview-url-actions">
-          <button className="glass-btn small overview-url-button--copy" onClick={copyLink} style={dashboardButtonStyle}>
-            {copied ? '✓ Copied' : 'Copy Link'}
-          </button>
-          <a href={publicPortfolioUrl} target="_blank" rel="noreferrer" className="glass-btn small overview-url-button--live" style={{ ...dashboardButtonStyle, textDecoration: 'none' }}>
-            View Live
-          </a>
-        </div>
-      </div>
 
-      {/* Suggestions */}
-      {portfolio?.suggestions?.length > 0 && (
-        <div style={{ marginTop: 28 }}>
-          <h3 style={{ fontSize: 26, fontWeight: 700, marginBottom: 20 }}>Suggestions to improve</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {portfolio.suggestions.map((s: any, i: number) => {
-              let badgeBg = themeText.chipBg
-              let badgeColor = themeText.chipText
-              let badgeBorder = themeText.chipBorder
-              if (s.priority === 'critical') {
-                badgeBg = themeText.dangerSoft
-                badgeColor = themeText.danger
-                badgeBorder = themeText.dangerBorder
-              } else if (s.priority === 'high') {
-                badgeBg = themeText.warningSoft
-                badgeColor = themeText.warning
-                badgeBorder = themeText.warningBorder
-              }
-              return (
-                <div key={i} className="glass" style={{ padding: '24px 28px', minHeight: 72, display: 'flex', alignItems: 'center', gap: 18 }}>
-                  <span style={{
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    fontWeight: 700,
-                    padding: '6px 12px',
-                    borderRadius: 6,
-                    background: badgeBg,
-                    color: badgeColor,
-                    border: badgeBorder,
-                    letterSpacing: '0.08em',
-                  }}>
-                    {s.priority.toUpperCase()}
-                  </span>
-                  <span style={{ fontSize: 16, color: themeText.primary, flex: 1 }}>{s.text}</span>
-                  <span style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 700, color: themeText.success, marginLeft: 'auto', whiteSpace: 'nowrap' }}>+{s.pts} pts</span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
+        {/* Suggestions */}
+        {portfolio?.suggestions?.length > 0 && (
+          <section className="overview-suggestions-section">
+            <h3 className="dashboard-card-title overview-suggestions-title" data-accent="improve">Suggestions to improve</h3>
+            <div className="overview-suggestions-list">
+              {portfolio.suggestions.map((s: any, i: number) => {
+                let badgeBg = themeText.chipBg
+                let badgeColor = themeText.chipText
+                let badgeBorder = themeText.chipBorder
+                if (s.priority === 'critical') {
+                  badgeBg = themeText.dangerSoft
+                  badgeColor = themeText.danger
+                  badgeBorder = themeText.dangerBorder
+                } else if (s.priority === 'high') {
+                  badgeBg = themeText.warningSoft
+                  badgeColor = themeText.warning
+                  badgeBorder = themeText.warningBorder
+                }
+                return (
+                  <div key={i} className="glass overview-suggestion-item">
+                    <span style={{
+                      fontFamily: 'monospace',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      padding: '6px 12px',
+                      borderRadius: 6,
+                      background: badgeBg,
+                      color: badgeColor,
+                      border: badgeBorder,
+                      letterSpacing: '0.08em',
+                    }}>
+                      {s.priority.toUpperCase()}
+                    </span>
+                    <span style={{ fontSize: 16, color: themeText.primary, flex: 1 }}>{s.text}</span>
+                    <span style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 700, color: themeText.success, marginLeft: 'auto', whiteSpace: 'nowrap' }}>+{s.pts} pts</span>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   )
 }

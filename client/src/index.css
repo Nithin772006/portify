@@ -866,6 +866,20 @@ html[data-theme="light"] .dashboard-main {
   --page-accent: var(--fg);
 }
 
+.dashboard-page--overview {
+  width: 100%;
+  min-height: 100%;
+  display: grid;
+  align-content: start;
+  gap: 28px;
+}
+
+.dashboard-page--overview .dashboard-title,
+.dashboard-page--overview .overview-stats-grid,
+.dashboard-page--overview .overview-url-card {
+  margin-bottom: 0;
+}
+
 [data-page="overview"] {
   --page-accent: var(--accent-overview);
 }
@@ -978,6 +992,17 @@ html[data-theme="light"] .dashboard-card-title[data-accent="settings"] {
 .overview-stats-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   margin-bottom: 28px;
+}
+
+.overview-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.35fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.overview-bottom-grid > :only-child {
+  grid-column: 1 / -1;
 }
 
 .analytics-grid {
@@ -1095,6 +1120,39 @@ html[data-theme="light"] .overview-stat-card[data-stat="time"] .overview-stat-nu
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.overview-suggestions-section {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-suggestions-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--fg);
+}
+
+html[data-theme="light"] .dashboard-card-title.overview-suggestions-title,
+html[data-theme="dark"] .dashboard-card-title.overview-suggestions-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.overview-suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.overview-suggestion-item {
+  padding: 24px 28px;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
 html[data-theme="light"] .overview-url-card {
@@ -2328,6 +2386,10 @@ html[data-theme="light"] .dark-theme-only {
   .overview-stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .overview-bottom-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 980px) {
@@ -2357,6 +2419,10 @@ html[data-theme="light"] .dark-theme-only {
     width: 100%;
     border-left: none;
     border-top: 1px solid rgba(251, 146, 60, 0.15);
+  }
+
+  .overview-suggestion-item {
+    flex-wrap: wrap;
   }
 }
 
