@@ -1,5 +1,11 @@
 import axios from 'axios';
 import { compileTemplate } from './templateEngine';
+import {
+  getBuiltinPortfolioThemes,
+  resolvePortfolioTheme,
+  type PortfolioThemeDefinition,
+  type PortfolioThemeTemplateKey,
+} from '../services/portfolioThemes';
 
 const BLANK_AVATAR_JPEG_BASE64 = '/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6KKKAP/2Q==';
 
@@ -49,6 +55,20 @@ export type RenderLink = {
   href: string;
 };
 
+export type GeneratedPortfolioTheme = {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  templateKey: PortfolioThemeTemplateKey;
+  accentColor: string;
+  secondaryColor: string;
+  surfaceTint: string;
+  previewGradient: string;
+  motionStyle: string;
+  featureTags: string[];
+};
+
 export type GeneratedPortfolioContent = {
   portfolioId: string;
   name: string;
@@ -67,6 +87,7 @@ export type GeneratedPortfolioContent = {
   metaTitle: string;
   metaDescription: string;
   year: number;
+  theme: GeneratedPortfolioTheme;
   customCss: string;
   skills: RenderSkill[];
   projects: RenderProject[];
@@ -86,6 +107,7 @@ export type GeneratedPortfolioContent = {
 export type BuildPortfolioDocumentOptions = {
   portfolioId: string;
   profession: string;
+  themeId?: string;
   baseUrl: string;
   cookieHeader?: string;
 };
@@ -644,6 +666,49 @@ function buildSocialLinks(github: string, linkedin: string): RenderLink[] {
   ].filter((entry): entry is RenderLink => entry !== null);
 }
 
+function toGeneratedTheme(theme: PortfolioThemeDefinition): GeneratedPortfolioTheme {
+  return {
+    id: theme.id,
+    name: theme.name,
+    tagline: theme.tagline,
+    description: theme.description,
+    templateKey: theme.templateKey,
+    accentColor: theme.accentColor,
+    secondaryColor: theme.secondaryColor,
+    surfaceTint: theme.surfaceTint,
+    previewGradient: theme.previewGradient,
+    motionStyle: theme.motionStyle,
+    featureTags: theme.featureTags,
+  };
+}
+
+function resolveGeneratedTheme(generatedContent: Partial<GeneratedPortfolioContent> | null | undefined) {
+  const builtinThemes = getBuiltinPortfolioThemes();
+  const requestedId = toNonEmptyString(generatedContent?.theme?.id);
+  const requestedTemplateKey = toNonEmptyString(generatedContent?.theme?.templateKey);
+  const fallbackTheme = builtinThemes.find((theme) => (
+    (requestedId && theme.id === requestedId) || (requestedTemplateKey && theme.templateKey === requestedTemplateKey)
+  )) || builtinThemes[0];
+
+  if (!generatedContent?.theme) {
+    return toGeneratedTheme(fallbackTheme);
+  }
+
+  return {
+    ...toGeneratedTheme(fallbackTheme),
+    ...generatedContent.theme,
+    featureTags: Array.isArray(generatedContent.theme.featureTags)
+      ? generatedContent.theme.featureTags.filter(Boolean)
+      : fallbackTheme.featureTags,
+  };
+}
+
+function getThemeTemplateName(theme: GeneratedPortfolioTheme) {
+  return theme.templateKey === 'quantum-canvas'
+    ? 'template_3d_portfolio.hbs'
+    : 'template_3d_theme_variants.hbs';
+}
+
 async function buildAvatarImage(
   formData: Record<string, any>,
   name: string,
@@ -687,8 +752,9 @@ export async function buildGeneratedPortfolioContent(
   formData: Record<string, any>,
   options: BuildPortfolioDocumentOptions,
 ): Promise<GeneratedPortfolioContent> {
-  const { portfolioId, profession, baseUrl, cookieHeader } = options;
+  const { portfolioId, profession, themeId, baseUrl, cookieHeader } = options;
   const enhancement = await getEnhancedContent(formData, profession);
+  const theme = toGeneratedTheme(await resolvePortfolioTheme(themeId || formData.themeId));
 
   const name = pickFirstString(
     formData.name,
@@ -735,6 +801,7 @@ export async function buildGeneratedPortfolioContent(
     metaTitle: `${name} | ${title || 'Portfolio'}`,
     metaDescription,
     year: new Date().getFullYear(),
+    theme,
     customCss: sanitizeCss(formData.customCss),
     skills,
     projects,
@@ -753,7 +820,11 @@ export async function buildGeneratedPortfolioContent(
 }
 
 export function renderPortfolioHtml(generatedContent: GeneratedPortfolioContent): string {
-  return compileTemplate('template_3d_portfolio.hbs', generatedContent);
+  const theme = resolveGeneratedTheme(generatedContent);
+  return compileTemplate(getThemeTemplateName(theme), {
+    ...generatedContent,
+    theme,
+  });
 }
 
 export async function buildPortfolioDocument(

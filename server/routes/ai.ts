@@ -51,11 +51,20 @@ function getRequestBaseUrl(req: Request): string {
   return `${req.protocol}://${host}`;
 }
 
+function getPortfolioThemeId(portfolio: any) {
+  return typeof portfolio?.themeId === 'string' && portfolio.themeId.trim()
+    ? portfolio.themeId.trim()
+    : typeof portfolio?.formData?.themeId === 'string' && portfolio.formData.themeId.trim()
+      ? portfolio.formData.themeId.trim()
+      : '';
+}
+
 async function updateStoredPortfolioDocument(portfolio: any, req: Request, forceFullRebuild: boolean) {
   if (forceFullRebuild || !portfolio.generatedContent) {
     const bundle = await buildPortfolioDocument(portfolio.formData || {}, {
       portfolioId: portfolio.portfolioId,
       profession: portfolio.profession,
+      themeId: getPortfolioThemeId(portfolio),
       baseUrl: getRequestBaseUrl(req),
       cookieHeader: req.headers.cookie,
     });

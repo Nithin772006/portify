@@ -5,6 +5,7 @@ import { useTheme } from '../hooks/useTheme'
 const navItems = [
   { label: 'Overview', tab: 'overview' },
   { label: 'My Portfolio', tab: 'portfolio' },
+  { label: 'Ui Theme', tab: 'theme' },
   { label: 'Analytics', tab: 'analytics' },
   { label: 'AI Score', tab: 'score' },
   { label: 'Improve', tab: 'improve' },

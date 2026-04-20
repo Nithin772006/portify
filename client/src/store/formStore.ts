@@ -29,6 +29,7 @@ type CustomFields = Record<string, string>
 interface FormState {
   currentStep: number
   profession: string
+  selectedThemeId: string
   name: string
   title: string
   location: string
@@ -45,6 +46,7 @@ interface FormState {
   jobDescription: string
   setStep: (step: number) => void
   setProfession: (p: string) => void
+  setSelectedThemeId: (themeId: string) => void
   setField: (key: string, value: any) => void
   setCustomField: (key: string, value: string) => void
   addSkill: (skill: string) => void
@@ -67,6 +69,7 @@ const emptyEducation: Education = { institution: '', degree: '', fieldOfStudy: '
 export const useFormStore = create<FormState>((set, get) => ({
   currentStep: 1,
   profession: '',
+  selectedThemeId: 'quantum-canvas',
   name: '',
   title: '',
   location: '',
@@ -84,6 +87,7 @@ export const useFormStore = create<FormState>((set, get) => ({
 
   setStep: (step) => set({ currentStep: step }),
   setProfession: (p) => set({ profession: p }),
+  setSelectedThemeId: (themeId) => set({ selectedThemeId: themeId }),
   setField: (key, value) => set({ [key]: value } as any),
   setCustomField: (key, value) => set((s) => ({
     customFields: { ...s.customFields, [key]: value }
@@ -129,6 +133,7 @@ export const useFormStore = create<FormState>((set, get) => ({
     const s = get()
     return {
       profession: s.profession,
+      themeId: s.selectedThemeId,
       name: s.name,
       title: s.title,
       location: s.location,
@@ -149,6 +154,7 @@ export const useFormStore = create<FormState>((set, get) => ({
   reset: () => set({
     currentStep: 1,
     profession: '',
+    selectedThemeId: 'quantum-canvas',
     name: '',
     title: '',
     location: '',

@@ -12,9 +12,11 @@ import portfolioRoutes from './routes/portfolio';
 import aiRoutes from './routes/ai';
 import analyticsRoutes from './routes/analytics';
 import skillsRoutes from './routes/skills';
+import themeRoutes from './routes/themes';
 import Portfolio from './models/Portfolio';
 import { getPortfolioHTMLPath } from './utils/templateEngine';
 import { buildPortfolioDocument } from './utils/portfolio3d';
+import { syncBuiltinPortfolioThemesToSupabase } from './services/portfolioThemes';
 import professionSchemas from './config/schemas/professions.json';
 
 const envCandidates = [
@@ -144,6 +146,7 @@ app.get('/p/:portfolioId', async (req, res) => {
       const bundle = await buildPortfolioDocument(portfolio.formData || {}, {
         portfolioId: portfolio.portfolioId,
         profession: portfolio.profession,
+        themeId: portfolio.themeId || portfolio.formData?.themeId,
         baseUrl: getRequestBaseUrl(req),
         cookieHeader: req.headers.cookie,
       });
@@ -181,6 +184,7 @@ app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/skills', skillsRoutes);
+app.use('/api/themes', themeRoutes);
 
 app.get('/api/schema/:profession', (req, res) => {
   const profession = req.params.profession.toLowerCase().replace(/\s+/g, '-');
@@ -207,6 +211,12 @@ export async function initializeApp() {
   } catch (err) {
     console.error('MongoDB connection failed:', err);
     console.log('Server will continue without database connectivity. Database-backed features may fail.');
+  }
+
+  try {
+    await syncBuiltinPortfolioThemesToSupabase();
+  } catch (err) {
+    console.warn('Supabase theme sync failed during initialization:', err);
   }
 
   return app;

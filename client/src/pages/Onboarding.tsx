@@ -5,6 +5,8 @@ import { useFormStore } from '../store/formStore'
 import { useAuth, API } from '../hooks/useAuth'
 import DotWave from '../components/DotWave'
 import GenerationCinematic, { MIN_DURATION_MS } from '../components/GenerationCinematic'
+import PortfolioThemeCard from '../components/PortfolioThemeCard'
+import type { PortfolioTheme, ThemeCatalogResponse } from '../types/portfolioTheme'
 
 type SectionKey = 'projects' | 'experience' | 'education'
 type StepKey = 'profession' | 'basic' | 'skills' | SectionKey | 'job' | 'review'
@@ -508,6 +510,9 @@ export default function Onboarding() {
   const [schema, setSchema] = useState<ProfessionSchema | null>(null)
   const [generating, setGenerating] = useState(false)
   const [skillInput, setSkillInput] = useState('')
+  const [themeCatalog, setThemeCatalog] = useState<PortfolioTheme[]>([])
+  const [defaultThemeId, setDefaultThemeId] = useState('quantum-canvas')
+  const [themeLoading, setThemeLoading] = useState(true)
 
   useEffect(() => {
     if (user?.email && !store.email) {
@@ -543,6 +548,47 @@ export default function Onboarding() {
     }
   }, [store.profession])
 
+  useEffect(() => {
+    let cancelled = false
+
+    API.get<ThemeCatalogResponse>('/themes')
+      .then((response) => {
+        if (cancelled) {
+          return
+        }
+
+        const themes = Array.isArray(response.data?.themes) ? response.data.themes : []
+        setThemeCatalog(themes)
+        setDefaultThemeId(response.data?.defaultThemeId || themes[0]?.id || 'quantum-canvas')
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setThemeCatalog([])
+          setDefaultThemeId('quantum-canvas')
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setThemeLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!themeCatalog.length) {
+      return
+    }
+
+    const hasSelectedTheme = themeCatalog.some((theme) => theme.id === store.selectedThemeId)
+    if (!hasSelectedTheme) {
+      store.setSelectedThemeId(defaultThemeId || themeCatalog[0].id)
+    }
+  }, [defaultThemeId, store, store.selectedThemeId, themeCatalog])
+
   const activeSchema = useMemo<ProfessionSchema>(() => {
     const fallbackLabel = professionOptions.find((option) => option.key === store.profession)?.label || DEFAULT_SCHEMA.label
     return {
@@ -575,6 +621,11 @@ export default function Onboarding() {
   const projectCopy = useMemo(() => getProjectStepCopy(store.profession), [store.profession])
   const experienceCopy = useMemo(() => getExperienceStepCopy(store.profession), [store.profession])
   const educationCopy = useMemo(() => getEducationStepCopy(store.profession), [store.profession])
+  const selectedTheme = useMemo(() => {
+    return themeCatalog.find((theme) => theme.id === store.selectedThemeId)
+      || themeCatalog.find((theme) => theme.id === defaultThemeId)
+      || null
+  }, [defaultThemeId, store.selectedThemeId, themeCatalog])
 
   useEffect(() => {
     if (store.currentStep > totalSteps) {
@@ -603,6 +654,7 @@ export default function Onboarding() {
   const buildSubmissionData = () => {
     const formData: Record<string, any> = {
       profession: store.profession,
+      themeId: selectedTheme?.id || store.selectedThemeId || defaultThemeId,
       skills: store.skills,
       jobDescription: store.jobDescription,
     }
@@ -951,8 +1003,47 @@ export default function Onboarding() {
                 <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 8 }}>Review and Generate</h2>
                 <p style={{ color: themeText.muted, fontSize: 14, marginBottom: 24 }}>Everything look good?</p>
 
+                <section
+                  className="review-theme-section"
+                  style={{
+                    ['--theme-accent' as any]: selectedTheme?.accentColor || '#818cf8',
+                    ['--theme-secondary' as any]: selectedTheme?.secondaryColor || '#22d3ee',
+                  }}
+                >
+                  <div className="review-theme-section__header">
+                    <div>
+                      <h3 className="review-theme-section__title">Choose your UI theme</h3>
+                      <p className="review-theme-section__copy">
+                        Pick the 3D portfolio package that should power your live site.
+                      </p>
+                    </div>
+                    <span className="review-theme-section__badge">
+                      {selectedTheme?.name || 'Quantum Canvas'}
+                    </span>
+                  </div>
+
+                  {themeLoading ? (
+                    <div className="review-theme-section__loading glass">
+                      <div className="spinner" />
+                      <span>Loading UI themes...</span>
+                    </div>
+                  ) : (
+                    <div className="portfolio-theme-grid onboarding-theme-grid">
+                      {themeCatalog.map((theme) => (
+                        <PortfolioThemeCard
+                          key={theme.id}
+                          theme={theme}
+                          selected={theme.id === (selectedTheme?.id || store.selectedThemeId)}
+                          onSelect={(nextTheme) => store.setSelectedThemeId(nextTheme.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <ReviewCard label="Profession" value={activeSchema.label} />
+                  <ReviewCard label="UI Theme" value={selectedTheme?.name || store.selectedThemeId} />
                   <ReviewCard label="Name" value={store.name} />
                   <ReviewCard label="Title" value={store.title} />
                   <ReviewCard label="Location" value={store.location} />

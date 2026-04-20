@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{{metaDescription}}" />
+  <meta property="og:title" content="{{metaTitle}}" />
+  <meta property="og:description" content="{{metaDescription}}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="{{avatarImage}}" />
+  <title>{{metaTitle}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    :root{--accent:{{theme.accentColor}};--secondary:{{theme.secondaryColor}};--surface:{{{theme.surfaceTint}}};--preview:{{{theme.previewGradient}}};--bg:#040712;--bg2:#02040b;--panel:rgba(8,14,27,.66);--border:rgba(255,255,255,.12);--text:#f8fafc;--muted:rgba(226,232,240,.72);--display:"Outfit","Segoe UI",sans-serif;--body:"Manrope","Segoe UI",sans-serif;--mono:"IBM Plex Mono",monospace;--radius:28px;--card:20px;--width:min(1220px,calc(100vw - 72px))}
+    body[data-theme="prism-parallax"]{--display:"Space Grotesk","Segoe UI",sans-serif;--radius:20px;--card:16px}
+    body[data-theme="neon-command"]{--display:"IBM Plex Mono",monospace;--body:"IBM Plex Mono",monospace;--radius:14px;--card:12px;letter-spacing:.01em}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 18% 12%,rgba(255,255,255,.08),transparent 28%),radial-gradient(circle at 82% 10%,rgba(255,255,255,.05),transparent 24%),linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);color:var(--text);font-family:var(--body);overflow-x:hidden}a{color:inherit;text-decoration:none}
+    #theme-canvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}#scroll-progress{position:fixed;top:0;left:0;z-index:40;width:100%;height:3px;transform-origin:left center;transform:scaleX(0);background:linear-gradient(90deg,var(--accent),var(--secondary))}
+    .shell{position:relative;z-index:1;width:var(--width);margin:0 auto;padding:26px 0 56px}.nav{position:fixed;left:24px;top:50%;z-index:20;display:flex;flex-direction:column;gap:12px;transform:translateY(-50%)}.nav a{display:flex;align-items:center;gap:10px;color:rgba(226,232,240,.46);font:600 .68rem var(--mono);letter-spacing:.18em;text-transform:uppercase}.nav a span:last-child{opacity:0;transform:translateX(-4px);transition:opacity .2s,transform .2s}.nav a:hover span:last-child,.nav a.active span:last-child{opacity:1;transform:none}.dot{width:11px;height:11px;border-radius:999px;border:1px solid rgba(255,255,255,.36)}.nav a.active{color:var(--text)}.nav a.active .dot{background:var(--accent);border-color:var(--accent)}
+    .hero,.skills,.grid-two,.contact-grid{display:grid;gap:22px}.hero{grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);align-items:stretch;min-height:calc(100vh - 72px);padding:42px 0 28px}.panel,.card{position:relative;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03)),var(--panel);backdrop-filter:blur(18px) saturate(150%);box-shadow:0 28px 70px rgba(2,6,23,.42);overflow:hidden}.panel::before,.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 14% 14%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 24%),radial-gradient(circle at 86% 12%,color-mix(in srgb,var(--secondary) 16%,transparent),transparent 22%);pointer-events:none}.panel{padding:34px;border-radius:var(--radius)}.card{padding:22px;border-radius:var(--card);transform-style:preserve-3d;transition:transform .22s,border-color .22s,box-shadow .22s}.card:hover{border-color:color-mix(in srgb,var(--accent) 28%,transparent);box-shadow:0 34px 82px rgba(2,6,23,.32)}
+    .eyebrow,.pill,.chip,.stack span{display:inline-flex;align-items:center;gap:10px;padding:.55rem .9rem;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);font:600 .72rem var(--mono);letter-spacing:.14em;text-transform:uppercase}.eyebrow{margin-bottom:16px;background:color-mix(in srgb,var(--accent) 12%,transparent);border-color:color-mix(in srgb,var(--accent) 24%,transparent)}.eyebrow::before{content:"";width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--secondary))}
+    h1,h2,h3,p{position:relative;z-index:1;margin:0}.title{font-family:var(--display);font-size:clamp(3rem,6vw,5.5rem);line-height:.92;letter-spacing:-.04em;margin-bottom:14px}.subline,.copy,.meta,.card p,.footer p{color:var(--muted);line-height:1.7}.actions,.tags,.stack,.links{display:flex;flex-wrap:wrap;gap:12px}.actions,.tags{margin-top:22px}.cta{display:inline-flex;align-items:center;gap:10px;padding:.82rem 1.16rem;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--border));background:color-mix(in srgb,var(--accent) 10%,transparent);transition:transform .2s,background .2s}.cta.alt{background:transparent}.cta:hover{transform:translateY(-2px);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+    .side{display:grid;gap:18px;align-content:start}.visual{padding:28px;border-radius:var(--radius);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),var(--preview)}.avatar-wrap{position:relative;display:grid;place-items:center;width:min(250px,60vw);aspect-ratio:1;margin:0 auto 22px;border-radius:40% 60% 56% 44%/44% 38% 62% 56%;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 34%,transparent),color-mix(in srgb,var(--secondary) 30%,transparent));border:1px solid rgba(255,255,255,.18)}.avatar{width:calc(100% - 28px);height:calc(100% - 28px);object-fit:cover;border-radius:inherit}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.stat{padding:20px;border-radius:var(--card)}.stat b{display:block;margin-bottom:8px;font-family:var(--display);font-size:2rem}.stat small{display:block;margin-bottom:10px;color:rgba(248,250,252,.64);font:600 .72rem var(--mono);letter-spacing:.14em;text-transform:uppercase}
+    section{padding:26px 0}.head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:22px}.label{margin-bottom:10px;color:color-mix(in srgb,var(--accent) 84%,white 10%);font:600 .72rem var(--mono);letter-spacing:.18em;text-transform:uppercase}.section-title{font-family:var(--display);font-size:clamp(1.9rem,2.8vw,3rem);letter-spacing:-.04em}
+    .skills{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr)}.cloud,.projects,.timeline,.education,.contact-grid{display:grid;gap:18px}.cloud{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}.projects,.timeline,.education,.contact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.media{position:relative;overflow:hidden;border-radius:calc(var(--card) - 4px);aspect-ratio:1.35/1;margin-bottom:18px;background:radial-gradient(circle at 18% 18%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 28%),linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02))}.media img{width:100%;height:100%;object-fit:cover;display:block}.placeholder{display:grid;place-items:center;height:100%;font-family:var(--display);font-size:4rem;color:rgba(248,250,252,.68)}.stack{margin-top:16px}.stack span{padding:.46rem .72rem;font-size:.7rem}.meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;font:600 .72rem var(--mono);letter-spacing:.12em;text-transform:uppercase}ul{margin:14px 0 0;padding-left:18px;display:grid;gap:8px;color:var(--muted)}li::marker{color:var(--accent)}
+    .footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;margin-top:24px}.mark{display:inline-flex;align-items:center;gap:10px;font:600 .76rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(248,250,252,.8)}.mark::before{content:"";width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--secondary))}
+    .reveal{opacity:0;transform:translateY(24px)}body[data-theme="prism-parallax"] .panel,body[data-theme="prism-parallax"] .card{clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px))}body[data-theme="neon-command"] .cta,body[data-theme="neon-command"] .eyebrow,body[data-theme="neon-command"] .pill,body[data-theme="neon-command"] .chip,body[data-theme="neon-command"] .stack span{border-radius:8px}
+    @media (max-width:1100px){.nav{display:none}.hero,.skills,.projects,.timeline,.education,.contact-grid{grid-template-columns:1fr}.shell{width:min(100vw - 36px,980px)}}@media (max-width:720px){.shell{width:calc(100vw - 20px);padding-top:18px}.panel,.visual,.card{padding:20px}.stats{grid-template-columns:1fr}.head,.footer{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body data-theme="{{theme.templateKey}}">
+  <div id="scroll-progress"></div>
+  <canvas id="theme-canvas" aria-hidden="true"></canvas>
+  <nav class="nav" aria-label="Portfolio sections">
+    <a href="#top" class="active"><span class="dot"></span><span>Top</span></a>
+    {{#if hasSkills}}<a href="#skills"><span class="dot"></span><span>Skills</span></a>{{/if}}
+    {{#if hasProjects}}<a href="#projects"><span class="dot"></span><span>Projects</span></a>{{/if}}
+    {{#if hasExperience}}<a href="#experience"><span class="dot"></span><span>Experience</span></a>{{/if}}
+    {{#if hasEducation}}<a href="#education"><span class="dot"></span><span>Education</span></a>{{/if}}
+    <a href="#contact"><span class="dot"></span><span>Contact</span></a>
+  </nav>
+  <main class="shell">
+    <section class="hero reveal" id="top">
+      <article class="panel">
+        <span class="eyebrow">{{theme.name}}</span>
+        <h1 class="title">{{name}}</h1>
+        <div class="subline">
+          <strong>{{title}}</strong>
+          {{#if hasLocation}}<span class="pill">{{location}}</span>{{/if}}
+          <span class="pill">{{theme.tagline}}</span>
+        </div>
+        <p class="copy" style="margin-top:18px">{{bio}}</p>
+        <div class="actions">
+          {{#if hasEmail}}<a class="cta" href="{{mailto email}}">Start a conversation</a>{{/if}}
+          {{#if hasSocialLinks}}{{#each socialLinks}}<a class="cta alt" href="{{safeHref href}}" target="_blank" rel="noreferrer">{{label}}</a>{{/each}}{{/if}}
+        </div>
+        <div class="tags">{{#each theme.featureTags}}<span class="chip">{{this}}</span>{{/each}}</div>
+      </article>
+      <div class="side">
+        <section class="visual card tilt-card">
+          <div class="avatar-wrap"><img class="avatar" src="{{avatarImage}}" alt="{{avatarAlt}}" /></div>
+          <h3>{{theme.description}}</h3>
+          <p class="copy">{{theme.motionStyle}}</p>
+        </section>
+        <div class="stats">
+          <article class="card tilt-card"><small>Skills</small><b>{{skills.length}}</b><span class="meta">Interactive cloud</span></article>
+          <article class="card tilt-card"><small>Projects</small><b>{{projects.length}}</b><span class="meta">3D modules</span></article>
+          <article class="card tilt-card"><small>Experience</small><b>{{experience.length}}</b><span class="meta">Animated timeline</span></article>
+          <article class="card tilt-card"><small>Theme</small><b>{{theme.name}}</b><span class="meta">{{theme.templateKey}}</span></article>
+        </div>
+      </div>
+    </section>
+    {{#if hasSkills}}
+      <section id="skills">
+        <div class="head reveal"><div><p class="label">Core Stack</p><h2 class="section-title">Interactive skill cloud</h2></div><p class="copy">The selected UI package combines 3D depth, motion, and responsive hover feedback across the page.</p></div>
+        <div class="skills"><article class="panel reveal"><p class="label">Theme Motion</p><h3>{{theme.motionStyle}}</h3><p class="copy">Each skill card reacts to pointer movement to keep the portfolio feeling active instead of static.</p></article><div class="cloud">{{#each skills}}<article class="card magnetic-chip reveal"><h3>{{name}}</h3><p>{{levelLabel}}</p><p>{{tooltip}}</p></article>{{/each}}</div></div>
+      </section>
+    {{/if}}
+    {{#if hasProjects}}
+      <section id="projects">
+        <div class="head reveal"><div><p class="label">Selected Work</p><h2 class="section-title">Projects staged with depth</h2></div><p class="copy">Project modules use layered media, perspective tilt, and hover lift to keep the work prominent.</p></div>
+        <div class="projects">{{#each projects}}<article class="card tilt-card reveal"><div class="media">{{#if hasPreviewImage}}<img src="{{previewImage}}" alt="{{title}} preview" />{{else}}<div class="placeholder">{{projectLabel}}</div>{{/if}}</div><h3>{{title}}</h3><p>{{description}}</p>{{#if hasTechStack}}<div class="stack">{{#each techStack}}<span>{{this}}</span>{{/each}}</div>{{/if}}{{#if hasProjectUrl}}<div class="links" style="margin-top:18px"><a class="cta" href="{{safeHref projectUrl}}" target="_blank" rel="noreferrer">View project</a></div>{{/if}}</article>{{/each}}</div>
+      </section>
+    {{/if}}
+    {{#if hasExperience}}
+      <section id="experience">
+        <div class="head reveal"><div><p class="label">Timeline</p><h2 class="section-title">Work history with motion cues</h2></div><p class="copy">Timeline cards stay concise so the scene behind them can keep the portfolio visually alive.</p></div>
+        <div class="timeline">{{#each experience}}<article class="card tilt-card reveal"><div class="meta"><span>{{dateRange}}</span><span>{{company}}</span></div><h3>{{role}}</h3><p>{{summary}}</p>{{#if bullets.length}}<ul>{{#each bullets}}<li>{{this}}</li>{{/each}}</ul>{{/if}}</article>{{/each}}</div>
+      </section>
+    {{/if}}
+    {{#if hasEducation}}
+      <section id="education">
+        <div class="head reveal"><div><p class="label">Foundation</p><h2 class="section-title">Education and credentials</h2></div><p class="copy">Education stays compact so the layout keeps a stronger product-style rhythm.</p></div>
+        <div class="education">{{#each education}}<article class="card tilt-card reveal"><div class="meta">{{#if year}}<span>{{year}}</span>{{/if}}{{#if institution}}<span>{{institution}}</span>{{/if}}</div><h3>{{degree}}</h3><p>{{summary}}</p></article>{{/each}}</div>
+      </section>
+    {{/if}}
+    <section id="contact">
+      <div class="head reveal"><div><p class="label">Contact</p><h2 class="section-title">Turn the theme into a conversation</h2></div><p class="copy">The chosen package is stored with the portfolio, so the same UI theme re-renders whenever the site updates.</p></div>
+      <div class="contact-grid">
+        <article class="card reveal"><div class="meta">{{#if hasEmail}}<span>{{email}}</span>{{/if}}{{#if hasPhone}}<span>{{phone}}</span>{{/if}}</div><h3>Reach out</h3><p>{{tagline}}</p><div class="links" style="margin-top:18px">{{#if hasEmail}}<a class="cta" href="{{mailto email}}">Email</a>{{/if}}{{#if hasSocialLinks}}{{#each socialLinks}}<a class="cta alt" href="{{safeHref href}}" target="_blank" rel="noreferrer">{{label}}</a>{{/each}}{{/if}}</div></article>
+        <article class="card reveal"><div class="meta"><span>{{theme.name}}</span><span>{{theme.templateKey}}</span></div><h3>Selected package</h3><p>{{theme.description}}</p><div class="tags" style="margin-top:18px">{{#each theme.featureTags}}<span class="chip">{{this}}</span>{{/each}}</div></article>
+      </div>
+    </section>
+    <footer class="panel footer reveal"><div><h3>{{name}}.{{title}}</h3><p>Rendered with the {{theme.name}} package on Portify.</p></div><span class="mark">{{year}}</span></footer>
+  </main>
+  <script>
+    (() => {
+      const progress = document.getElementById('scroll-progress')
+      const navLinks = Array.from(document.querySelectorAll('.nav a'))
+      const sections = Array.from(document.querySelectorAll('section[id]'))
+      const tiltCards = Array.from(document.querySelectorAll('.tilt-card'))
+      const magneticChips = Array.from(document.querySelectorAll('.magnetic-chip'))
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#22d3ee'
+      const secondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim() || '#8b5cf6'
+      const themeKey = document.body.dataset.theme || 'aurora-sphere'
+
+      function syncProgress() {
+        const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
+        progress.style.transform = `scaleX(${Math.min(window.scrollY / max, 1)})`
+      }
+
+      function syncSections() {
+        const offset = window.scrollY + window.innerHeight * 0.3
+        let currentId = 'top'
+        sections.forEach((section) => {
+          if (section.offsetTop <= offset) {
+            currentId = section.id
+          }
+        })
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${currentId}`)
+        })
+      }
+
+      syncProgress()
+      syncSections()
+      window.addEventListener('scroll', syncProgress, { passive: true })
+      window.addEventListener('scroll', syncSections, { passive: true })
+
+      tiltCards.forEach((card) => {
+        card.addEventListener('pointermove', (event) => {
+          const rect = card.getBoundingClientRect()
+          const px = ((event.clientX - rect.left) / rect.width) - 0.5
+          const py = ((event.clientY - rect.top) / rect.height) - 0.5
+          card.style.transform = `perspective(1200px) rotateX(${(-py * 8).toFixed(2)}deg) rotateY(${(px * 10).toFixed(2)}deg) translateY(-4px)`
+        })
+        card.addEventListener('pointerleave', () => {
+          card.style.transform = ''
+        })
+      })
+
+      magneticChips.forEach((chip) => {
+        chip.addEventListener('pointermove', (event) => {
+          const rect = chip.getBoundingClientRect()
+          const px = ((event.clientX - rect.left) / rect.width) - 0.5
+          const py = ((event.clientY - rect.top) / rect.height) - 0.5
+          chip.style.transform = `translate3d(${(px * 12).toFixed(2)}px, ${(py * 12).toFixed(2)}px, 0)`
+        })
+        chip.addEventListener('pointerleave', () => {
+          chip.style.transform = ''
+        })
+      })
+
+      if (window.gsap && window.ScrollTrigger) {
+        window.gsap.registerPlugin(window.ScrollTrigger)
+        window.gsap.utils.toArray('.reveal').forEach((node) => {
+          window.gsap.to(node, {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: node, start: 'top 84%' },
+          })
+        })
+      } else {
+        document.querySelectorAll('.reveal').forEach((node) => {
+          node.style.opacity = 1
+          node.style.transform = 'none'
+        })
+      }
+
+      if (!window.THREE) {
+        return
+      }
+
+      const canvas = document.getElementById('theme-canvas')
+      const renderer = new window.THREE.WebGLRenderer({ canvas, alpha: true, antialias: true })
+      const camera = new window.THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 100)
+      const scene = new window.THREE.Scene()
+      const root = new window.THREE.Group()
+      const accentColor = new window.THREE.Color(accent)
+      const secondaryColor = new window.THREE.Color(secondary)
+      const pointer = { x: 0, y: 0 }
+      camera.position.set(0, 0, 8.6)
+      scene.add(new window.THREE.AmbientLight(0xffffff, 0.9))
+
+      const accentLight = new window.THREE.PointLight(accentColor, 1.6, 24)
+      accentLight.position.set(4, 2, 5)
+      scene.add(accentLight)
+      const secondaryLight = new window.THREE.PointLight(secondaryColor, 1.3, 24)
+      secondaryLight.position.set(-4, -2, 4)
+      scene.add(secondaryLight)
+      scene.add(root)
+
+      function addWire(geometry, color, position, rotation) {
+        const wire = new window.THREE.LineSegments(
+          new window.THREE.EdgesGeometry(geometry),
+          new window.THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.72 })
+        )
+        wire.position.set(position[0], position[1], position[2])
+        wire.rotation.set(rotation[0], rotation[1], rotation[2])
+        root.add(wire)
+        return wire
+      }
+
+      function addMesh(geometry, material, position, rotation) {
+        const mesh = new window.THREE.Mesh(geometry, material)
+        mesh.position.set(position[0], position[1], position[2])
+        mesh.rotation.set(rotation[0], rotation[1], rotation[2])
+        root.add(mesh)
+        return mesh
+      }
+
+      const meshes = []
+      if (themeKey === 'aurora-sphere') {
+        meshes.push(addMesh(new window.THREE.IcosahedronGeometry(1.45, 1), new window.THREE.MeshPhysicalMaterial({ color: accentColor, transparent: true, opacity: 0.18, roughness: 0.08, metalness: 0.3, clearcoat: 0.8 }), [0.1, 0.35, 0], [0.3, 0.2, 0]))
+        meshes.push(addWire(new window.THREE.IcosahedronGeometry(1.82, 0), secondaryColor, [0.1, 0.35, 0], [0, 0, 0]))
+        meshes.push(addMesh(new window.THREE.TorusGeometry(2.3, 0.05, 24, 160), new window.THREE.MeshBasicMaterial({ color: secondaryColor, transparent: true, opacity: 0.38 }), [0, 0.2, -0.5], [1.1, 0, 0.5]))
+      } else if (themeKey === 'prism-parallax') {
+        meshes.push(addMesh(new window.THREE.OctahedronGeometry(1.35, 0), new window.THREE.MeshStandardMaterial({ color: accentColor, transparent: true, opacity: 0.24, roughness: 0.16, metalness: 0.46 }), [0.2, 0.3, 0], [0.2, 0.8, 0.3]))
+        meshes.push(addWire(new window.THREE.TetrahedronGeometry(2.2, 0), secondaryColor, [-0.1, 0.1, -0.3], [0.4, 0.6, 0.2]))
+        meshes.push(addMesh(new window.THREE.TorusKnotGeometry(0.72, 0.08, 140, 18), new window.THREE.MeshBasicMaterial({ color: secondaryColor, transparent: true, opacity: 0.42 }), [2.4, -1.4, -1.6], [0.4, 0.4, 0.2]))
+      } else if (themeKey === 'neon-command') {
+        meshes.push(addWire(new window.THREE.BoxGeometry(2.4, 2.4, 2.4), accentColor, [0, 0.2, 0], [0.5, 0.4, 0.2]))
+        meshes.push(addWire(new window.THREE.BoxGeometry(3.3, 3.3, 3.3), secondaryColor, [0, 0.2, 0], [0.2, 0.8, 0]))
+        meshes.push(addMesh(new window.THREE.TorusGeometry(2.7, 0.03, 12, 120), new window.THREE.MeshBasicMaterial({ color: accentColor, transparent: true, opacity: 0.45 }), [0, -0.5, -1], [1.57, 0, 0]))
+      } else {
+        meshes.push(addMesh(new window.THREE.IcosahedronGeometry(1.32, 0), new window.THREE.MeshStandardMaterial({ color: accentColor, emissive: accentColor, emissiveIntensity: 0.08, transparent: true, opacity: 0.22, roughness: 0.2, metalness: 0.4 }), [0, 0.3, 0], [0.1, 0.5, 0.2]))
+        meshes.push(addWire(new window.THREE.IcosahedronGeometry(2.1, 0), secondaryColor, [0, 0.3, 0], [0, 0, 0]))
+        meshes.push(addMesh(new window.THREE.TorusGeometry(2.5, 0.05, 16, 120), new window.THREE.MeshBasicMaterial({ color: accentColor, transparent: true, opacity: 0.4 }), [0, 0.2, -0.8], [1.05, 0.1, 0.3]))
+      }
+
+      const starCount = 180
+      const positions = new Float32Array(starCount * 3)
+      for (let index = 0; index < starCount; index += 1) {
+        const stride = index * 3
+        positions[stride] = (Math.random() - 0.5) * 18
+        positions[stride + 1] = (Math.random() - 0.5) * 14
+        positions[stride + 2] = (Math.random() - 0.5) * 10
+      }
+      const starGeometry = new window.THREE.BufferGeometry()
+      starGeometry.setAttribute('position', new window.THREE.BufferAttribute(positions, 3))
+      const stars = new window.THREE.Points(starGeometry, new window.THREE.PointsMaterial({ color: accentColor, size: themeKey === 'neon-command' ? 0.03 : 0.05, transparent: true, opacity: 0.7 }))
+      scene.add(stars)
+
+      function resize() {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8))
+        renderer.setSize(window.innerWidth, window.innerHeight, false)
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+      }
+
+      resize()
+      window.addEventListener('resize', resize)
+      window.addEventListener('pointermove', (event) => {
+        pointer.x = ((event.clientX / window.innerWidth) - 0.5) * 1.4
+        pointer.y = ((event.clientY / window.innerHeight) - 0.5) * 1.2
+      })
+
+      function animate() {
+        requestAnimationFrame(animate)
+        const time = performance.now() * 0.001
+        root.rotation.y += 0.0035
+        root.rotation.x = Math.sin(time * 0.45) * 0.18
+        root.position.x += (pointer.x - root.position.x) * 0.04
+        root.position.y += ((-pointer.y * 0.7) - root.position.y) * 0.04
+        meshes.forEach((mesh, index) => {
+          mesh.rotation.x += 0.0014 + (index * 0.0003)
+          mesh.rotation.y += 0.002 + (index * 0.00035)
+        })
+        stars.rotation.y += 0.0005
+        stars.rotation.x = Math.cos(time * 0.22) * 0.08
+        renderer.render(scene, camera)
+      }
+
+      animate()
+    })()
+  </script>
+  {{#if customCss}}<style id="portify-custom-css">{{{customCss}}}</style>{{/if}}
+</body>
+</html>

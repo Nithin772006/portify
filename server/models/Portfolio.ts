@@ -4,6 +4,7 @@ export interface IPortfolio extends Document {
   userId: mongoose.Types.ObjectId;
   portfolioId: string;
   profession: string;
+  themeId: string;
   formData: Record<string, any>;
   generatedContent?: Record<string, any>;
   generatedHTML?: string;
@@ -26,6 +27,7 @@ const PortfolioSchema = new Schema<IPortfolio>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   portfolioId: { type: String, required: true, unique: true },
   profession: { type: String, required: true },
+  themeId: { type: String, default: 'quantum-canvas' },
   formData: { type: Schema.Types.Mixed, required: true },
   generatedContent: { type: Schema.Types.Mixed, default: null },
   generatedHTML: { type: String, default: '' },

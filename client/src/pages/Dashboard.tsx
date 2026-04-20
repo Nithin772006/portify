@@ -4,8 +4,10 @@ import { motion } from 'framer-motion'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts'
 import Sidebar from '../components/Sidebar'
 import AIChatAgent from '../components/AIChatAgent'
+import PortfolioThemeCard from '../components/PortfolioThemeCard'
 import { useAuth, API, buildPortfolioUrl } from '../hooks/useAuth'
 import { useFormStore } from '../store/formStore'
+import type { PortfolioTheme, ThemeCatalogResponse } from '../types/portfolioTheme'
 
 const themeText = {
   primary: 'var(--fg)',
@@ -125,6 +127,7 @@ export default function Dashboard() {
       <main className="dashboard-main">
         {activeTab === 'overview' && <OverviewTab portfolio={portfolio} analytics={analytics} />}
         {activeTab === 'portfolio' && <PortfolioTab portfolio={portfolio} onRegenerate={loadData} onDeleteSuccess={handlePortfolioDeleted} />}
+        {activeTab === 'theme' && <UiThemeTab portfolio={portfolio} onThemeApplied={loadData} />}
         {activeTab === 'analytics' && <AnalyticsTab analytics={analytics} />}
         {activeTab === 'score' && <ScoreTab portfolio={portfolio} />}
         {activeTab === 'improve' && <ImproveTab portfolio={portfolio} />}
@@ -364,6 +367,111 @@ function PortfolioTab({ portfolio, onRegenerate, onDeleteSuccess }: any) {
           loading="lazy"
         />
       </div>
+    </div>
+  )
+}
+
+function UiThemeTab({ portfolio, onThemeApplied }: any) {
+  const [themeCatalog, setThemeCatalog] = useState<PortfolioTheme[]>([])
+  const [defaultThemeId, setDefaultThemeId] = useState('quantum-canvas')
+  const [loadingThemes, setLoadingThemes] = useState(true)
+  const [applyingThemeId, setApplyingThemeId] = useState('')
+  const currentThemeId = portfolio?.themeId || portfolio?.formData?.themeId || defaultThemeId
+  const currentTheme = themeCatalog.find((theme) => theme.id === currentThemeId)
+
+  useEffect(() => {
+    let cancelled = false
+
+    API.get<ThemeCatalogResponse>('/themes')
+      .then((response) => {
+        if (cancelled) {
+          return
+        }
+
+        const themes = Array.isArray(response.data?.themes) ? response.data.themes : []
+        setThemeCatalog(themes)
+        setDefaultThemeId(response.data?.defaultThemeId || themes[0]?.id || 'quantum-canvas')
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setThemeCatalog([])
+          setDefaultThemeId('quantum-canvas')
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoadingThemes(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const handleApplyTheme = async (theme: PortfolioTheme) => {
+    if (!portfolio?.portfolioId || applyingThemeId || theme.id === currentThemeId) {
+      return
+    }
+
+    setApplyingThemeId(theme.id)
+    try {
+      await API.put(`/portfolio/${portfolio.portfolioId}/theme`, { themeId: theme.id })
+      await onThemeApplied()
+    } catch {
+      alert('Failed to update UI theme')
+    } finally {
+      setApplyingThemeId('')
+    }
+  }
+
+  return (
+    <div
+      className="dashboard-page ui-theme-page"
+      data-page="theme"
+      style={{
+        ['--theme-accent' as any]: currentTheme?.accentColor || '#818cf8',
+        ['--theme-secondary' as any]: currentTheme?.secondaryColor || '#22d3ee',
+        ['--theme-preview' as any]: currentTheme?.previewGradient || 'linear-gradient(135deg, #111827 0%, #020617 100%)',
+      } as CSSProperties}
+    >
+      <div className="glass ui-theme-hero">
+        <div>
+          <h1 className="dashboard-title" style={{ marginBottom: 10 }}>Ui Theme</h1>
+          <p className="ui-theme-hero__copy">
+            Choose which 3D animated portfolio package should power your public site.
+          </p>
+        </div>
+
+        <div className="ui-theme-hero__current">
+          <span className="ui-theme-hero__label">Current theme</span>
+          <strong>{currentTheme?.name || 'Quantum Canvas'}</strong>
+          <span>{currentTheme?.motionStyle || 'Cinematic particles and interactive panels'}</span>
+        </div>
+      </div>
+
+      {loadingThemes ? (
+        <div className="glass ui-theme-loading">
+          <div className="spinner" />
+          <span>Loading UI themes...</span>
+        </div>
+      ) : themeCatalog.length > 0 ? (
+        <div className="portfolio-theme-grid dashboard-theme-grid">
+          {themeCatalog.map((theme) => (
+            <PortfolioThemeCard
+              key={theme.id}
+              theme={theme}
+              current={theme.id === currentThemeId}
+              loading={applyingThemeId === theme.id}
+              onAction={handleApplyTheme}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="glass ui-theme-loading">
+          <span>No UI themes are available right now.</span>
+        </div>
+      )}
     </div>
   )
 }
